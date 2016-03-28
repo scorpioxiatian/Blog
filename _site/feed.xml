@@ -6,8 +6,8 @@
 </description>
     <link>http://www.pisces.ml/</link>
     <atom:link href="http://www.pisces.ml/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 28 Mar 2016 00:49:48 +0800</pubDate>
-    <lastBuildDate>Mon, 28 Mar 2016 00:49:48 +0800</lastBuildDate>
+    <pubDate>Mon, 28 Mar 2016 23:09:36 +0800</pubDate>
+    <lastBuildDate>Mon, 28 Mar 2016 23:09:36 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -1546,6 +1546,77 @@ TIME_ZONE = &quot;TIME_ZONE&quot;
         
         
         <category>openstack</category>
+        
+      </item>
+    
+      <item>
+        <title>linux病毒扫描软件ClamAV安装于使用</title>
+        <description>&lt;p&gt;近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，&lt;br /&gt;
+根据该现象有可能是ddos攻击导致。于是上网查了一些杀毒软件，试图kill掉该病毒。网上查询到了一款ubuntu上的开源杀毒软件，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV。&lt;/p&gt;
+
+&lt;h2 id=&quot;clamav&quot;&gt;什么是clamAV&lt;/h2&gt;
+
+&lt;p&gt;clamAV全名Clam AntiVirus，是一款开源的杀毒软件，能够预防许多的恶意软件主要应用于邮件服务器。扫描并清理系统中的恶意软件。&lt;/p&gt;
+
+&lt;p&gt;clamAV包含了大量的实用程序如：命令行扫描，自动跟新数据库和可扩展多线程守护进程，以及反病毒引擎。&lt;/p&gt;
+
+&lt;p&gt;接下来我们就来介绍下clamAV的安装和使用。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;安装＆配置&lt;/h2&gt;
+
+&lt;p&gt;1.安装软件包&lt;/p&gt;
+
+&lt;p&gt;clamAV安装方法有很多可以直接去官网&lt;a href=&quot;http://www.clamav.net/download.html&quot;&gt;下载&lt;/a&gt;并进行安装，为了方便我们可以直接执行以下命令直接在ubuntu系统中安装该软件包：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 如果安装不了我们可以先更新下软件源`apt-get update`
+sudo apt-get install clamav clamav-daemon
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2.更新病毒数据库&lt;/p&gt;
+
+&lt;p&gt;安装完成后clamAV会提示你安装病毒数据库，clamAV会根据数据库中提供的数据对系统进行搜索查询，我们只需要执行以下命令来同步远程病毒数据库,该命令会下载main.cvd和daily.cvd文件。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo freshclam
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;clamav-1&quot;&gt;clamAV使用&lt;/h2&gt;
+
+&lt;p&gt;安装很简单，使用更简单，就一个&lt;code&gt;clamscan&lt;/code&gt;命令即可。示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 扫描/home目录下的文件
+clamscan -r /home
+
+# 全盘扫描(该命令可能执行时间比较长)
+clamscan -r /
+
+# 格式化输出，只输出显示病毒文件或者是恶意进程
+clamscan -r --bell -i /
+
+# 查询任意位置，并将结果写入新文件记录
+sudo clamscan -r /folder/to/scan/ | grep FOUND &amp;gt;&amp;gt; /path/to/save/report/myfile.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如上命令会扫描目录，如果发现恶意软件或者病毒文件会自动清理&lt;/p&gt;
+
+&lt;p&gt;我们还可以为clamAV建立定时任务执行如下命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;crontab -e
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;并在定时任务中写入如下任务&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;另外如果你不习惯使用命令行，还可以使用clamAV的GUI界面，需要执行以下命令安装GUI&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install ClamTK
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+        <pubDate>Sun, 27 Mar 2016 17:00:13 +0800</pubDate>
+        <link>http://www.pisces.ml/articles/linux/2016328</link>
+        <guid isPermaLink="true">http://www.pisces.ml/articles/linux/2016328</guid>
+        
         
       </item>
     

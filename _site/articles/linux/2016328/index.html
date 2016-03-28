@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>linux病毒扫描软件ClamAV安装于使用 « Scorpio Blog</title>
+  <meta name="description" content="近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况...">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.pisces.ml/articles/linux/2016328">
+  <link rel="alternate" type="application/rss+xml" title="Scorpio Blog" href="http://www.pisces.ml/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Scorpio Blog</a>
+    <nav class="site-nav">
+      
+        
+      
+        
+        <a class="page-link" href="/about/">About</a>
+        
+      
+        
+        <a class="page-link" href="/category/">Category</a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">linux病毒扫描软件ClamAV安装于使用</h1>
+    <p class="post-meta">Mar 27, 2016</p>
+  </header>
+
+  <article class="post-content">
+    <p>近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，<br />
+根据该现象有可能是ddos攻击导致。于是上网查了一些杀毒软件，试图kill掉该病毒。网上查询到了一款ubuntu上的开源杀毒软件，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV。</p>
+
+<h2 id="clamav">什么是clamAV</h2>
+
+<p>clamAV全名Clam AntiVirus，是一款开源的杀毒软件，能够预防许多的恶意软件主要应用于邮件服务器。扫描并清理系统中的恶意软件。</p>
+
+<p>clamAV包含了大量的实用程序如：命令行扫描，自动跟新数据库和可扩展多线程守护进程，以及反病毒引擎。</p>
+
+<p>接下来我们就来介绍下clamAV的安装和使用。</p>
+
+<h2 id="section">安装＆配置</h2>
+
+<p>1.安装软件包</p>
+
+<p>clamAV安装方法有很多可以直接去官网<a href="http://www.clamav.net/download.html">下载</a>并进行安装，为了方便我们可以直接执行以下命令直接在ubuntu系统中安装该软件包：</p>
+
+<pre><code># 如果安装不了我们可以先更新下软件源`apt-get update`
+sudo apt-get install clamav clamav-daemon
+</code></pre>
+
+<p>2.更新病毒数据库</p>
+
+<p>安装完成后clamAV会提示你安装病毒数据库，clamAV会根据数据库中提供的数据对系统进行搜索查询，我们只需要执行以下命令来同步远程病毒数据库,该命令会下载main.cvd和daily.cvd文件。</p>
+
+<pre><code>sudo freshclam
+</code></pre>
+
+<h2 id="clamav-1">clamAV使用</h2>
+
+<p>安装很简单，使用更简单，就一个<code>clamscan</code>命令即可。示例：</p>
+
+<pre><code># 扫描/home目录下的文件
+clamscan -r /home
+
+# 全盘扫描(该命令可能执行时间比较长)
+clamscan -r /
+
+# 格式化输出，只输出显示病毒文件或者是恶意进程
+clamscan -r --bell -i /
+
+# 查询任意位置，并将结果写入新文件记录
+sudo clamscan -r /folder/to/scan/ | grep FOUND &gt;&gt; /path/to/save/report/myfile.txt
+</code></pre>
+
+<p>如上命令会扫描目录，如果发现恶意软件或者病毒文件会自动清理</p>
+
+<p>我们还可以为clamAV建立定时任务执行如下命令：</p>
+
+<pre><code>crontab -e
+</code></pre>
+
+<p>并在定时任务中写入如下任务</p>
+
+<pre><code>00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
+</code></pre>
+
+<p>另外如果你不习惯使用命令行，还可以使用clamAV的GUI界面，需要执行以下命令安装GUI</p>
+
+<pre><code>sudo apt-get install ClamTK
+</code></pre>
+
+  </article>
+  
+  
+
+<div class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = 'disqusscorpio'; // required: replace example with your forum shortname
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+</div>
+
+
+
+
+</div>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/avatar.jpg" alt="ChengKunYe">
+  <div class="col-box-title name">ChengKunYe</div>
+  <p>“任何傻瓜都能写出计算机可以理解的代码。好的程序员能写出人能读懂的代码” ——Martin Fowler</p>
+  <p class="contact">
+    
+    <a href="https://github.com/scorpioxiatian">GitHub</a>
+    
+    
+    
+    <a href="mailto:smith7alan@qq.com">Email</a>
+    
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
+    
+      <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
+    
+      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+    
+      <li><a class="post-link" href="/archivers/hello">Welcome to Jekyll and EasyBook</a></li>
+    
+      <li><a class="post-link" href="/archivers/test">Style Test</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2016 ChengKunYe
+</div>
+</footer>
+
+<script src="/js/easybook.js"></script>
+
+  </body>
+
+</html>
