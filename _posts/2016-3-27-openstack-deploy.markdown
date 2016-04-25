@@ -212,7 +212,7 @@ rabbitmqctl add_user openstack root
 3.给openstack用户添加读写权限
 
 ```
-rabbitmqctl set_permissions openstack ".*" ".*" ".*"i
+rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ```
 
 ## 安装openstack软件
