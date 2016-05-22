@@ -163,6 +163,20 @@ keystone是基于python WSGI框架实现的web应用，通过paste组织web应�
 * Resource服务提供资源包括project/domain
 * Assignment服务分配角色
 
+每个 Keystone 功能都支持用于集成到异构环境并展示不同功能的后端插件。通过下表我们看下各个服务所管理的对象：
+
+```
+| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
+|:-----:|:-----:|:-----:|:-----:|:-----:|
+| identity | keystone.identity.controllers.Groupl3 keystone.identity.controllers.UserV3 | -- | ldap/sql | [identity] driver = sql|
+| Token | keystone.token.controllers.Auth | uuid/pki/pkiz/fernet | kvs/sql/memcache/memcache_pool | [token] provider = uuid/pki/pkiz/fernet driver = sql/memcache/memcache_pool |
+|Catalog  | keystone.catalog.controllers.EndpointV3 keystone.catalog.controllers.RegionV3 keystone.catalog.controllers.ServiceV3 | -- |  kvs/templated/sql | [catalog] driver=sql/kvs/templated |
+| Policy | keystone.policy.controllers.PolicyV3 | -- | sql | [policy] driver=sql |
+| Resource | keystone.resource.controllers.DomainV3 keystone.resource.controllers.ProjectV3 | -- | ldap/sql | [resource] driver=ldap/sql |
+| Assignment | keystone.assignment.controllers.GrantAssignmentV3 keystone.assignment.controllers.ProjectAssignmentV3 keystone.assignment.controllers.TenantAssignment keystone.assignment.controllers.Role keystone.assignment.controllers.RoleAssignmentV2 keystone.assignment.controllers.RoleAssignmentV3 keystone.assignment.controllers.RoleV3 | -- | sql/ldap | [assignment] driver=sql/ldap |
+| Authentication | keystone.auth.controllers.Auth | password/saml2/token/oauth1 | -- | [auth] methods=external,password,token,oauth1 password=keystone.auth.plugins.password.Password token=keystone.auth.plugins.token.Token |
+```
+
 ## 安装配置
 
 ### 软件安装

@@ -51,7 +51,7 @@
 
   <header class="post-header">
     <h1 class="post-title">keystone架构和功能分析</h1>
-    <p class="post-meta">Apr 25, 2016</p>
+    <p class="post-meta">Apr 24, 2016</p>
   </header>
 
   <article class="post-content">
@@ -227,6 +227,19 @@
 * Resource服务提供资源包括project/domain<br />
 * Assignment服务分配角色</p>
 
+<p>每个 Keystone 功能都支持用于集成到异构环境并展示不同功能的后端插件。通过下表我们看下各个服务所管理的对象：</p>
+
+<pre><code>| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
+|:-----:|:-----:|:-----:|:-----:|:-----:|
+| identity | keystone.identity.controllers.Groupl3 keystone.identity.controllers.UserV3 | -- | ldap/sql | [identity] driver = sql|
+| Token | keystone.token.controllers.Auth | uuid/pki/pkiz/fernet | kvs/sql/memcache/memcache_pool | [token] provider = uuid/pki/pkiz/fernet driver = sql/memcache/memcache_pool |
+|Catalog  | keystone.catalog.controllers.EndpointV3 keystone.catalog.controllers.RegionV3 keystone.catalog.controllers.ServiceV3 | -- |  kvs/templated/sql | [catalog] driver=sql/kvs/templated |
+| Policy | keystone.policy.controllers.PolicyV3 | -- | sql | [policy] driver=sql |
+| Resource | keystone.resource.controllers.DomainV3 keystone.resource.controllers.ProjectV3 | -- | ldap/sql | [resource] driver=ldap/sql |
+| Assignment | keystone.assignment.controllers.GrantAssignmentV3 keystone.assignment.controllers.ProjectAssignmentV3 keystone.assignment.controllers.TenantAssignment keystone.assignment.controllers.Role keystone.assignment.controllers.RoleAssignmentV2 keystone.assignment.controllers.RoleAssignmentV3 keystone.assignment.controllers.RoleV3 | -- | sql/ldap | [assignment] driver=sql/ldap |
+| Authentication | keystone.auth.controllers.Auth | password/saml2/token/oauth1 | -- | [auth] methods=external,password,token,oauth1 password=keystone.auth.plugins.password.Password token=keystone.auth.plugins.token.Token |
+</code></pre>
+
 <h2 id="section-6">安装配置</h2>
 
 <h3 id="section-7">软件安装</h3>
@@ -374,6 +387,8 @@ http://blog.csdn.net/hzrandd/article/details/10834381</p>
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
+    
       <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
     
       <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
@@ -381,8 +396,6 @@ http://blog.csdn.net/hzrandd/article/details/10834381</p>
       <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
     
       <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
-    
-      <li><a class="post-link" href="/archivers/hello">Welcome to Jekyll and EasyBook</a></li>
     
   </ul>
 </div>

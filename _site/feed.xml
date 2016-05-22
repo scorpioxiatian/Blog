@@ -6,9 +6,100 @@
 </description>
     <link>http://www.pisces.ml/</link>
     <atom:link href="http://www.pisces.ml/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 25 Apr 2016 12:17:21 +0800</pubDate>
-    <lastBuildDate>Mon, 25 Apr 2016 12:17:21 +0800</lastBuildDate>
+    <pubDate>Sun, 22 May 2016 23:53:37 +0800</pubDate>
+    <lastBuildDate>Sun, 22 May 2016 23:53:37 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>tcpdump命令详解</title>
+        <description>&lt;p&gt;这篇文章主要是记录关于tcpdump的使用，tcpdump是常用的抓包工具，该工具可以灵活的抓取在网络中包传输。&lt;/p&gt;
+
+&lt;p&gt;（操作系统：ubuntu 15.04）&lt;/p&gt;
+
+&lt;h2 id=&quot;tcpdump&quot;&gt;tcpdump命令格式&lt;/h2&gt;
+
+&lt;p&gt;注意：详细解释可以通过man tcpdump来查看。&lt;/p&gt;
+
+&lt;p&gt;tcpdump [-i 网卡] -nnAX ‘表达式’&lt;/p&gt;
+
+&lt;p&gt;参数意义：&lt;br /&gt;
+-i: interface 监听的网卡&lt;br /&gt;
+-nn：表示以ip和port的方式显示来源主机和目的主机，而不是用主机名和服务&lt;br /&gt;
+-A：以ascii的方式显示数据包，抓取web数据时很有用&lt;br /&gt;
+-X：数据包将会以16进制和ascii的方式显示（这样显示有什么好处？）&lt;/p&gt;
+
+&lt;p&gt;表达式：表达式有很多种，常见的有：host 主机；port 端口；src host 发包主机；dst host 收包主机。多个条件可以用and、or组合，取反可以使用!，更多的使用可以查看man 7 pcap-filter。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;监听网卡&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;# 监听eth0网卡
+tcpdump -i eth0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用ifconfig命令来查看网卡信息，以便通过tcpdump命令来监听相应网卡。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;监听指定协议的数据&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;# 表示监听eth0网卡，并且只接收icmp协议数据
+tcpdump -i eth0 -nn &#39;icmp&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;监听icmp协议类型数据，icmp即ping命令使用的协议。常用的协议类型有tcp,udp等。&lt;/p&gt;
+
+&lt;p&gt;示例：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/tcpdump.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;以上是抓取icmp协议类型数据，数据含义：&lt;/p&gt;
+
+&lt;p&gt;抓到包的时间 IP 发包的主机和端口 &amp;gt; 接收的主机和端口 数据包内容&lt;/p&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;监听指定的主机&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;host 192.168.1.231&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;该命令表示抓取主机192.168.1.231的发送包和接收包&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;src host 192.168.1.231&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示只抓取主机192.168.1.231发送的包&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;dst host 192.168.1.231&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示只抓取主机192.168.1.231接收到的包&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;监听指定端口&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;该命令表示抓取80端口的数据包，并以ascii的方式显示数据包，在web开发中很实用&lt;/p&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;监听指定主机和端口&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80 and src host 192.168.1.231&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;多个条件可以用and，or连接。上例表示监听192.168.1.231主机通过80端口发送的数据包。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-5&quot;&gt;监听除某个端口外的其它端口&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;!port 22&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果需要排除某个端口或者主机，可以使用“!”符号，上例表示监听非22端口的数据包。&lt;/p&gt;
+
+&lt;p&gt;———————————————–华丽分割线—————————————–&lt;/p&gt;
+
+&lt;p&gt;以上内容记录以备后用。。。。。。。&lt;/p&gt;
+</description>
+        <pubDate>Sun, 22 May 2016 17:00:13 +0800</pubDate>
+        <link>http://www.pisces.ml/articles/linux/2016522</link>
+        <guid isPermaLink="true">http://www.pisces.ml/articles/linux/2016522</guid>
+        
+        
+      </item>
     
       <item>
         <title>keystone架构和功能分析</title>
@@ -184,6 +275,19 @@
 * Resource服务提供资源包括project/domain&lt;br /&gt;
 * Assignment服务分配角色&lt;/p&gt;
 
+&lt;p&gt;每个 Keystone 功能都支持用于集成到异构环境并展示不同功能的后端插件。通过下表我们看下各个服务所管理的对象：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
+|:-----:|:-----:|:-----:|:-----:|:-----:|
+| identity | keystone.identity.controllers.Groupl3 keystone.identity.controllers.UserV3 | -- | ldap/sql | [identity] driver = sql|
+| Token | keystone.token.controllers.Auth | uuid/pki/pkiz/fernet | kvs/sql/memcache/memcache_pool | [token] provider = uuid/pki/pkiz/fernet driver = sql/memcache/memcache_pool |
+|Catalog  | keystone.catalog.controllers.EndpointV3 keystone.catalog.controllers.RegionV3 keystone.catalog.controllers.ServiceV3 | -- |  kvs/templated/sql | [catalog] driver=sql/kvs/templated |
+| Policy | keystone.policy.controllers.PolicyV3 | -- | sql | [policy] driver=sql |
+| Resource | keystone.resource.controllers.DomainV3 keystone.resource.controllers.ProjectV3 | -- | ldap/sql | [resource] driver=ldap/sql |
+| Assignment | keystone.assignment.controllers.GrantAssignmentV3 keystone.assignment.controllers.ProjectAssignmentV3 keystone.assignment.controllers.TenantAssignment keystone.assignment.controllers.Role keystone.assignment.controllers.RoleAssignmentV2 keystone.assignment.controllers.RoleAssignmentV3 keystone.assignment.controllers.RoleV3 | -- | sql/ldap | [assignment] driver=sql/ldap |
+| Authentication | keystone.auth.controllers.Auth | password/saml2/token/oauth1 | -- | [auth] methods=external,password,token,oauth1 password=keystone.auth.plugins.password.Password token=keystone.auth.plugins.token.Token |
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h2 id=&quot;section-6&quot;&gt;安装配置&lt;/h2&gt;
 
 &lt;h3 id=&quot;section-7&quot;&gt;软件安装&lt;/h3&gt;
@@ -289,7 +393,7 @@ http://www.cnblogs.com/sammyliu/p/4272611.html&lt;br /&gt;
 http://blog.csdn.net/hzrandd/article/details/10834381&lt;/p&gt;
 
 </description>
-        <pubDate>Mon, 25 Apr 2016 17:00:13 +0800</pubDate>
+        <pubDate>Sun, 24 Apr 2016 17:00:13 +0800</pubDate>
         <link>http://www.pisces.ml/articles/openstack/20160425</link>
         <guid isPermaLink="true">http://www.pisces.ml/articles/openstack/20160425</guid>
         

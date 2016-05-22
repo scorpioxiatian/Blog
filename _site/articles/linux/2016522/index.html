@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>tcpdump命令详解 « Scorpio 博客</title>
+  <meta name="description" content="这篇文章主要是记录关于tcpdump的使用，tcpdump是常用的抓包工具，该工具可以灵活的抓取在网络中包传输。">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.pisces.ml/articles/linux/2016522">
+  <link rel="alternate" type="application/rss+xml" title="Scorpio 博客" href="http://www.pisces.ml/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Scorpio 博客</a>
+    <nav class="site-nav">
+      
+        
+      
+        
+        <a class="page-link" href="/about/">关于我</a>
+        
+      
+        
+        <a class="page-link" href="/category/">目录</a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">tcpdump命令详解</h1>
+    <p class="post-meta">May 22, 2016</p>
+  </header>
+
+  <article class="post-content">
+    <p>这篇文章主要是记录关于tcpdump的使用，tcpdump是常用的抓包工具，该工具可以灵活的抓取在网络中包传输。</p>
+
+<p>（操作系统：ubuntu 15.04）</p>
+
+<h2 id="tcpdump">tcpdump命令格式</h2>
+
+<p>注意：详细解释可以通过man tcpdump来查看。</p>
+
+<p>tcpdump [-i 网卡] -nnAX ‘表达式’</p>
+
+<p>参数意义：<br />
+-i: interface 监听的网卡<br />
+-nn：表示以ip和port的方式显示来源主机和目的主机，而不是用主机名和服务<br />
+-A：以ascii的方式显示数据包，抓取web数据时很有用<br />
+-X：数据包将会以16进制和ascii的方式显示（这样显示有什么好处？）</p>
+
+<p>表达式：表达式有很多种，常见的有：host 主机；port 端口；src host 发包主机；dst host 收包主机。多个条件可以用and、or组合，取反可以使用!，更多的使用可以查看man 7 pcap-filter。</p>
+
+<h2 id="section">监听网卡</h2>
+
+<pre><code># 监听eth0网卡
+tcpdump -i eth0
+</code></pre>
+
+<p>可以使用ifconfig命令来查看网卡信息，以便通过tcpdump命令来监听相应网卡。</p>
+
+<h2 id="section-1">监听指定协议的数据</h2>
+
+<pre><code># 表示监听eth0网卡，并且只接收icmp协议数据
+tcpdump -i eth0 -nn 'icmp'
+</code></pre>
+
+<p>监听icmp协议类型数据，icmp即ping命令使用的协议。常用的协议类型有tcp,udp等。</p>
+
+<p>示例：</p>
+
+<p><img src="http://www.pisces.ml/images/tcpdump.png" alt="" /></p>
+
+<p>以上是抓取icmp协议类型数据，数据含义：</p>
+
+<p>抓到包的时间 IP 发包的主机和端口 &gt; 接收的主机和端口 数据包内容</p>
+
+<h2 id="section-2">监听指定的主机</h2>
+
+<pre><code>tcpdump -i eth0 -nn 'host 192.168.1.231'
+</code></pre>
+
+<p>该命令表示抓取主机192.168.1.231的发送包和接收包</p>
+
+<pre><code>tcpdump -i eth0 -nn 'src host 192.168.1.231'
+</code></pre>
+
+<p>表示只抓取主机192.168.1.231发送的包</p>
+
+<pre><code>tcpdump -i eth0 -nn 'dst host 192.168.1.231'
+</code></pre>
+
+<p>表示只抓取主机192.168.1.231接收到的包</p>
+
+<h2 id="section-3">监听指定端口</h2>
+
+<pre><code>tcpdump -i eth0 -nnA 'port 80'
+</code></pre>
+<p>该命令表示抓取80端口的数据包，并以ascii的方式显示数据包，在web开发中很实用</p>
+
+<h2 id="section-4">监听指定主机和端口</h2>
+
+<pre><code>tcpdump -i eth0 -nnA 'port 80 and src host 192.168.1.231'
+</code></pre>
+<p>多个条件可以用and，or连接。上例表示监听192.168.1.231主机通过80端口发送的数据包。</p>
+
+<h2 id="section-5">监听除某个端口外的其它端口</h2>
+
+<pre><code>tcpdump -i eth0 -nnA '!port 22'
+</code></pre>
+
+<p>如果需要排除某个端口或者主机，可以使用“!”符号，上例表示监听非22端口的数据包。</p>
+
+<p>———————————————–华丽分割线—————————————–</p>
+
+<p>以上内容记录以备后用。。。。。。。</p>
+
+  </article>
+  
+  
+
+<div class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = 'disqusscorpio'; // required: replace example with your forum shortname
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+</div>
+
+
+
+
+</div>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/avatar.jpg" alt="ChengKunYe">
+  <div class="col-box-title name">ChengKunYe</div>
+  <p>“任何傻瓜都能写出计算机可以理解的代码。好的程序员能写出人能读懂的代码” ——Martin Fowler</p>
+  <p class="contact">
+    
+    <a href="https://github.com/scorpioxiatian">GitHub</a>
+    
+    
+    
+    <a href="mailto:smith7alan@qq.com">Email</a>
+    
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
+    
+      <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
+    
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
+    
+      <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
+    
+      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2016 ChengKunYe
+</div>
+</footer>
+
+<script src="/js/easybook.js"></script>
+
+  </body>
+
+</html>
