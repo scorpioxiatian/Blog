@@ -132,7 +132,7 @@
 
 <p>修改文件/etc/hosts,如下所示：</p>
 
-<pre><code># 控制节点编辑文件/etc/hosts
+<div class="highlighter-rouge"><pre class="highlight"><code># 控制节点编辑文件/etc/hosts
 
 192.168.2.2 controller
 192.168.2.5 compute
@@ -141,22 +141,23 @@
 192.168.2.2 controller
 192.168.2.5 compute
 </code></pre>
+</div>
 
 <p>可以通过以下命令在控制节点和计算节点验证是否配置正确：</p>
 
 <blockquote>
-  <p>root@compute:~# ping controller<br />
-PING controller (192.168.2.2) 56(84) bytes of data.<br />
-64 bytes from controller (192.168.2.2): icmp_seq=1 ttl=64 time=0.407 ms<br />
-64 bytes from controller (192.168.2.2): icmp_seq=2 ttl=64 time=0.508 ms<br />
+  <p>root@compute:~# ping controller
+PING controller (192.168.2.2) 56(84) bytes of data.
+64 bytes from controller (192.168.2.2): icmp_seq=1 ttl=64 time=0.407 ms
+64 bytes from controller (192.168.2.2): icmp_seq=2 ttl=64 time=0.508 ms
 64 bytes from controller (192.168.2.2): icmp_seq=3 ttl=64 time=0.571 ms</p>
 </blockquote>
 
 <blockquote>
-  <p>root@compute:~# ping -c 4 openstack.org<br />
-PING openstack.org (162.242.140.107) 56(84) bytes of data.<br />
-64 bytes from 162.242.140.107: icmp_seq=1 ttl=42 time=386 ms<br />
-64 bytes from 162.242.140.107: icmp_seq=2 ttl=42 time=384 ms<br />
+  <p>root@compute:~# ping -c 4 openstack.org
+PING openstack.org (162.242.140.107) 56(84) bytes of data.
+64 bytes from 162.242.140.107: icmp_seq=1 ttl=42 time=386 ms
+64 bytes from 162.242.140.107: icmp_seq=2 ttl=42 time=384 ms
 64 bytes from 162.242.140.107: icmp_seq=3 ttl=42 time=386 ms</p>
 </blockquote>
 
@@ -168,31 +169,35 @@ PING openstack.org (162.242.140.107) 56(84) bytes of data.<br />
 
 <p>1.安装chrony包</p>
 
-<pre><code>apt-get install chrony
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install chrony
 </code></pre>
+</div>
 
 <p>2.编辑文件/etc/chrony/chrony.conf插入以下内容</p>
 
-<pre><code># 以asia.pool.ntp.org时间为例
+<div class="highlighter-rouge"><pre class="highlight"><code># 以asia.pool.ntp.org时间为例
 server asia.pool.ntp.org iburst
 </code></pre>
+</div>
 
 <p>3.重启NTP服务</p>
 
-<pre><code>service chrony restart
+<div class="highlighter-rouge"><pre class="highlight"><code>service chrony restart
 </code></pre>
+</div>
 
 <p>计算节点compute：</p>
 
 <p>安装步骤跟控制节点一样，在编辑/etc/chrony/chrony.conf文件时需要插入以下内容：</p>
 
-<pre><code># 表示跟controller节点时间同步
+<div class="highlighter-rouge"><pre class="highlight"><code># 表示跟controller节点时间同步
 server controller iburst
 </code></pre>
+</div>
 
 <p>验证：</p>
 
-<pre><code># *表示当前所用的时间
+<div class="highlighter-rouge"><pre class="highlight"><code># *表示当前所用的时间
 # 控制节点
 root@controller:~# chronyc sources
 210 Number of sources = 1
@@ -207,6 +212,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 ===============================================================================
 ^* controller                    5   6   377    36  +4607us[  +27ms] +/-  734ms
 </code></pre>
+</div>
 
 <h4 id="openstack">安装openstack软件包支持</h4>
 
@@ -220,15 +226,16 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 
 <p>执行命令：</p>
 
-<pre><code>apt-get update &amp;&amp; apt-get dist-upgrade
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get update &amp;&amp; apt-get dist-upgrade
 </code></pre>
+</div>
 
 <p>如果出现如下错误：</p>
 
 <blockquote>
-  <p>error:<br />
-W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty Release: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY 5EDB1B62EC4926EA<br />
-执行命令<code>apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA</code>后在运行<code>apt-get update &amp;&amp; apt-get dist-upgrade</code></p>
+  <p>error:
+W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty Release: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY 5EDB1B62EC4926EA
+执行命令<code class="highlighter-rouge">apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA</code>后在运行<code class="highlighter-rouge">apt-get update &amp;&amp; apt-get dist-upgrade</code></p>
 </blockquote>
 
 <h4 id="sql">安装SQL数据库</h4>
@@ -237,36 +244,42 @@ W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty R
 
 <p>1.安装sql包,并且设置root用户密码</p>
 
-<pre><code>apt-get install mariadb-server python-pymysql
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install mariadb-server python-pymysql
 </code></pre>
+</div>
 
 <p>2.修改文件/etc/mysql/my.cnf并添加如下内容允许所有节点请求。</p>
 
-<pre><code>[mysqld]
+<div class="highlighter-rouge"><pre class="highlight"><code>[mysqld]
 bind-address = 0.0.0.0
 </code></pre>
+</div>
 
 <p>3.重启sql服务</p>
 
-<pre><code>service mysql restart
+<div class="highlighter-rouge"><pre class="highlight"><code>service mysql restart
 </code></pre>
+</div>
 
 <h4 id="rabbitmq">安装消息队列rabbitmq</h4>
 
 <p>1.安装rabbitmq软件包</p>
 
-<pre><code>apt-get install rabbitmq-server
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install rabbitmq-server
 </code></pre>
+</div>
 
 <p>2.添加openstack用户</p>
 
-<pre><code>rabbitmqctl add_user openstack root
+<div class="highlighter-rouge"><pre class="highlight"><code>rabbitmqctl add_user openstack root
 </code></pre>
+</div>
 
 <p>3.给openstack用户添加读写权限</p>
 
-<pre><code>rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+<div class="highlighter-rouge"><pre class="highlight"><code>rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 </code></pre>
+</div>
 
 <h2 id="openstack-1">安装openstack软件</h2>
 
@@ -278,44 +291,49 @@ bind-address = 0.0.0.0
 
 <p>1.登入数据库</p>
 
-<pre><code>mysql -uroot
+<div class="highlighter-rouge"><pre class="highlight"><code>mysql -uroot
 </code></pre>
+</div>
 
 <p>2.创建keystone数据库</p>
 
-<pre><code>CREATE DATABASE keystone;
+<div class="highlighter-rouge"><pre class="highlight"><code>CREATE DATABASE keystone;
 </code></pre>
+</div>
 
 <p>3.添加数据库访问权限</p>
 
-<pre><code>GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' \
+<div class="highlighter-rouge"><pre class="highlight"><code>GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' \
   IDENTIFIED BY 'root';
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'root';
 </code></pre>
+</div>
 
 <h4 id="admin-token">随机生成admin token</h4>
 
 <p>执行以下命令生成admin token以便后续步骤使用</p>
 
-<pre><code>root@controller:~# openssl rand -hex 10
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~# openssl rand -hex 10
 e770648f049dd983575b
 </code></pre>
+</div>
 
 <h4 id="keystone-2">安装keystone服务</h4>
 
 <p>1.从源安装keystone</p>
 
-<pre><code># 禁止安装完后启动服务
+<div class="highlighter-rouge"><pre class="highlight"><code># 禁止安装完后启动服务
 echo "manual" &gt; /etc/init/keystone.override
 
 apt-get install keystone apache2 libapache2-mod-wsgi \
   memcached python-memcache
 </code></pre>
+</div>
 
 <p>2.配置keystone配置文件/etc/keystone/keystone.conf,修改以下配置</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 admin_token = e770648f049dd983575b
 
@@ -340,22 +358,25 @@ driver = sql
 ...
 verbose = True
 </code></pre>
+</div>
 
 <p>3.同步数据库</p>
 
-<pre><code>su -s /bin/sh -c "keystone-manage db_sync" keystone
+<div class="highlighter-rouge"><pre class="highlight"><code>su -s /bin/sh -c "keystone-manage db_sync" keystone
 </code></pre>
+</div>
 
 <h4 id="apache">配置apache服务器</h4>
 
 <p>1.编辑文件/etc/apache2/apache2.conf修改Servername</p>
 
-<pre><code>ServerName controller
+<div class="highlighter-rouge"><pre class="highlight"><code>ServerName controller
 </code></pre>
+</div>
 
 <p>2.创建文件/etc/apache2/sites-available/wsgi-keystone.conf，并添加如下内容</p>
 
-<pre><code>Listen 5000
+<div class="highlighter-rouge"><pre class="highlight"><code>Listen 5000
 Listen 35357
 
 &lt;VirtualHost *:5000&gt;
@@ -404,26 +425,29 @@ Listen 35357
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;
 </code></pre>
+</div>
 
 <p>3.允许加载keystone服务并重启apache服务器</p>
 
-<pre><code>ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
+<div class="highlighter-rouge"><pre class="highlight"><code>ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
 
 service apache2 restart
 </code></pre>
+</div>
 
 <h4 id="service-entityapi-endpoints">创建service entity和API endpoints</h4>
 
 <p>1.配置认证信息</p>
 
-<pre><code>export OS_TOKEN=e770648f049dd983575b
+<div class="highlighter-rouge"><pre class="highlight"><code>export OS_TOKEN=e770648f049dd983575b
 export OS_URL=http://controller:35357/v3
 export OS_IDENTITY_API_VERSION=3
 </code></pre>
+</div>
 
 <p>2.创建keystone服务</p>
 
-<pre><code>root@controller:~# openstack service create \
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~# openstack service create \
 &gt;   --name keystone --description "OpenStack Identity" identity
 +-------------+----------------------------------+
 | Field       | Value                            |
@@ -435,10 +459,11 @@ export OS_IDENTITY_API_VERSION=3
 | type        | identity                         |
 +-------------+----------------------------------+
 </code></pre>
+</div>
 
 <p>3.创建endpoints</p>
 
-<pre><code>root@controller:~# openstack endpoint create --region RegionOne \
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~# openstack endpoint create --region RegionOne \
 &gt;   identity public http://controller:5000/v2.0
 +--------------+----------------------------------+
 | Field        | Value                            |
@@ -486,12 +511,13 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:35357/v2.0     |
 +--------------+----------------------------------+
 </code></pre>
+</div>
 
 <h4 id="projects-users-and-roles">创建projects, users, and roles</h4>
 
 <p>1.创建管理员用户</p>
 
-<pre><code># 创建管理员项目
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建管理员项目
 root@controller:~# openstack project create --domain default \
 &gt;   --description "Admin Project" admin
 +-------------+----------------------------------+
@@ -532,10 +558,11 @@ root@controller:~# openstack role create admin
 # 添加权限
 root@controller:~# openstack role add --project admin --user admin admin
 </code></pre>
+</div>
 
 <p>2.创建service项目</p>
 
-<pre><code>root@controller:~# openstack project create --domain default \
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~# openstack project create --domain default \
 &gt;   --description "Service Project" service
 +-------------+----------------------------------+
 | Field       | Value                            |
@@ -549,10 +576,11 @@ root@controller:~# openstack role add --project admin --user admin admin
 | parent_id   | None                             |
 +-------------+----------------------------------+
 </code></pre>
+</div>
 
 <p>3.创建普通用户</p>
 
-<pre><code># 创建demo项目
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建demo项目
 root@controller:~# openstack project create --domain default \
 &gt;   --description "Demo Project" demo
 +-------------+----------------------------------+
@@ -593,17 +621,19 @@ root@controller:~# openstack role create user
 # 分配角色
 root@controller:~# openstack role add --project demo --user demo user
 </code></pre>
+</div>
 
 <h4 id="section-7">验证配置</h4>
 
 <p>1.清除原有环境变量</p>
 
-<pre><code>unset OS_TOKEN OS_URL
+<div class="highlighter-rouge"><pre class="highlight"><code>unset OS_TOKEN OS_URL
 </code></pre>
+</div>
 
 <p>2.使用用户名密码获取token</p>
 
-<pre><code>root@controller:~#  openstack --os-auth-url http://controller:35357/v3 \
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~#  openstack --os-auth-url http://controller:35357/v3 \
 &gt;   --os-project-domain-id default --os-user-domain-id default \
 &gt;   --os-project-name admin --os-username admin --os-auth-type password \
 &gt;   token issue
@@ -617,12 +647,13 @@ Password:
 | user_id    | 59a21d5fea5a42908d5911635eb92742 |
 +------------+----------------------------------+
 </code></pre>
+</div>
 
 <h4 id="openstack-2">创建openstack命令行证书文件</h4>
 
 <p>新建文件admin-openrc.sh，并添加如下内容：</p>
 
-<pre><code>export OS_PROJECT_DOMAIN_ID=default
+<div class="highlighter-rouge"><pre class="highlight"><code>export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_TENANT_NAME=admin
@@ -631,6 +662,7 @@ export OS_PASSWORD=root #根据实际填写
 export OS_AUTH_URL=http://controller:35357/v3
 export OS_IDENTITY_API_VERSION=3
 </code></pre>
+</div>
 
 <h3 id="glance">安装镜像服务glance</h3>
 
@@ -638,7 +670,7 @@ export OS_IDENTITY_API_VERSION=3
 
 <p>1.进入数据库服务创建glance数据库</p>
 
-<pre><code># 创建glance数据库
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建glance数据库
 CREATE DATABASE glance;
 
 分配相应的访问权限
@@ -647,15 +679,17 @@ GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' \
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' \
   IDENTIFIED BY 'root';
 </code></pre>
+</div>
 
 <p>2.source证书文件admin-openrc.sh</p>
 
-<pre><code>root@controller:~# source admin-openrc.sh
+<div class="highlighter-rouge"><pre class="highlight"><code>root@controller:~# source admin-openrc.sh
 </code></pre>
+</div>
 
 <p>3.在keystone中创建glance用户信息</p>
 
-<pre><code># 创建glance用户
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建glance用户
 root@controller:~# openstack user create --domain default --password-prompt glance
 User Password:
 Repeat User Password:
@@ -734,17 +768,19 @@ root@controller:~#  openstack endpoint create --region RegionOne \
 | url          | http://controller:9292           |
 +--------------+----------------------------------+
 </code></pre>
+</div>
 
 <h4 id="glance-1">安装配置glance软件包</h4>
 
 <p>1.安装软件包</p>
 
-<pre><code>apt-get install glance python-glanceclient
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install glance python-glanceclient
 </code></pre>
+</div>
 
 <p>2.修改配置文件/etc/glance/glance-api.conf和/etc/glance/glance-registry.conf</p>
 
-<pre><code># 修改文件/etc/glance/glance-api.conf
+<div class="highlighter-rouge"><pre class="highlight"><code># 修改文件/etc/glance/glance-api.conf
 [database]
 ...
 connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
@@ -801,15 +837,17 @@ flavor = keystone
 notification_driver = noop
 verbose = True
 </code></pre>
+</div>
 
 <p>3.同步glance数据库并重启服务</p>
 
-<pre><code># 同步数据库
+<div class="highlighter-rouge"><pre class="highlight"><code># 同步数据库
 su -s /bin/sh -c "glance-manage db_sync" glance
 # 重启服务
 service glance-registry restart
 service glance-api restart
 </code></pre>
+</div>
 
 <p>p</p>
 
@@ -817,23 +855,26 @@ service glance-api restart
 
 <p>1.将镜像版本信息写入证书文件admin-openrc.sh</p>
 
-<pre><code>echo "export OS_IMAGE_API_VERSION=2" \
+<div class="highlighter-rouge"><pre class="highlight"><code>echo "export OS_IMAGE_API_VERSION=2" \
   | tee -a admin-openrc.sh
 </code></pre>
+</div>
 
 <p>2.source文件admin-openrc.sh</p>
 
-<pre><code>source admin-openrc.sh
+<div class="highlighter-rouge"><pre class="highlight"><code>source admin-openrc.sh
 </code></pre>
+</div>
 
 <p>3.下载测试镜像</p>
 
-<pre><code>wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+<div class="highlighter-rouge"><pre class="highlight"><code>wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 </code></pre>
+</div>
 
 <p>4.在glance创建镜像</p>
 
-<pre><code># 创建镜像
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建镜像
 root@controller:~# glance image-create --name "cirros" \
 &gt;   --file cirros-0.3.4-x86_64-disk.img \
 &gt;   --disk-format qcow2 --container-format bare \
@@ -869,6 +910,7 @@ root@controller:~# glance image-list
 | 67cfd037-5704-4432-9b2c-cf5fffdb6319 | cirros |
 +--------------------------------------+--------+
 </code></pre>
+</div>
 
 <h3 id="nova">安装计算服务Nova</h3>
 
@@ -878,7 +920,7 @@ root@controller:~# glance image-list
 
 <p>1.创建nova数据库，并分配权限</p>
 
-<pre><code># 创建数据库
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建数据库
 CREATE DATABASE nova;
 
 # 分配访问权限
@@ -887,10 +929,11 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' \
 GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' \
   IDENTIFIED BY 'NOVA_DBPASS';
 </code></pre>
+</div>
 
 <p>2.在keystone中创建nova用户,服务以及endpoint</p>
 
-<pre><code># 创建账户
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建账户
 root@controller:~# openstack user create --domain default --password-prompt nova
 User Password:
 Repeat User Password:
@@ -968,19 +1011,21 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:8774/v2/%(tenant_id)s |
 +--------------+-----------------------------------------+
 </code></pre>
+</div>
 
 <h5 id="nova-1">安装nova软件包并配置</h5>
 
 <p>1.安装软件包</p>
 
-<pre><code> apt-get install nova-api nova-cert nova-conductor \
+<div class="highlighter-rouge"><pre class="highlight"><code> apt-get install nova-api nova-cert nova-conductor \
    nova-consoleauth nova-novncproxy nova-scheduler \
      python-novaclient
 </code></pre>
+</div>
 
 <p>2.编辑配置文件/etc/nova/nova.conf 修改以下配置</p>
 
-<pre><code>[database]
+<div class="highlighter-rouge"><pre class="highlight"><code>[database]
 ...
 connection = mysql+pymysql://nova:root@controller/nova
 
@@ -1034,32 +1079,36 @@ host = controller
 ...
 lock_path = /var/lib/nova/tmp
 </code></pre>
+</div>
 
 <p>3.同步数据库</p>
 
-<pre><code>su -s /bin/sh -c "nova-manage db sync" nova
+<div class="highlighter-rouge"><pre class="highlight"><code>su -s /bin/sh -c "nova-manage db sync" nova
 </code></pre>
+</div>
 
 <p>4.重启nova服务</p>
 
-<pre><code>service nova-api restart
+<div class="highlighter-rouge"><pre class="highlight"><code>service nova-api restart
 service nova-cert restart
 service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
 </code></pre>
+</div>
 
 <h3 id="section-11">安装计算节点</h3>
 
 <p>1.安装软件包</p>
 
-<pre><code>apt-get install nova-compute sysfsutils
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install nova-compute sysfsutils
 </code></pre>
+</div>
 
 <p>2.修改配置文件/etc/nova/nova.conf</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 rpc_backend = rabbit
 ...
@@ -1106,10 +1155,11 @@ host = controller
 ...
 lock_path = /var/lib/nova/tmp
 </code></pre>
+</div>
 
 <p>3.验证是否支持虚拟化</p>
 
-<pre><code># 执行以下命令如果返回０则表示不支持
+<div class="highlighter-rouge"><pre class="highlight"><code># 执行以下命令如果返回０则表示不支持
 egrep -c '(vmx|svm)' /proc/cpuinfo
 
 # 我们的环境是在虚拟化环境中所以肯定不支持再次虚拟化，所以需要在/etc/nova/nova-compute.conf中做如下配置
@@ -1117,17 +1167,19 @@ egrep -c '(vmx|svm)' /proc/cpuinfo
 ...
 virt_type = qemu # 如果支持的话可以设置为kvm
 </code></pre>
+</div>
 
 <p>4.重启nova compute服务</p>
 
-<pre><code>service nova-compute restart
+<div class="highlighter-rouge"><pre class="highlight"><code>service nova-compute restart
 </code></pre>
+</div>
 
 <h3 id="section-12">验证服务</h3>
 
 <p>在控制节点执行以下命令</p>
 
-<pre><code># 列出nova所有服务列表
+<div class="highlighter-rouge"><pre class="highlight"><code># 列出nova所有服务列表
 root@controller:~# nova service-list
 +----+------------------+------------+----------+---------+-------+----------------------------+-----------------+
 | Id | Binary           | Host       | Zone     | Status  | State | Updated_at                 | Disabled Reason |
@@ -1147,6 +1199,7 @@ root@controller:~# nova image-list
 | 67cfd037-5704-4432-9b2c-cf5fffdb6319 | cirros | ACTIVE |        |
 +--------------------------------------+--------+--------+--------+
 </code></pre>
+</div>
 
 <h3 id="neutron">安装网络服务neutron</h3>
 
@@ -1154,7 +1207,7 @@ root@controller:~# nova image-list
 
 <p>1.创建neutron数据库并分配相应权限</p>
 
-<pre><code># 创建数据库
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建数据库
 CREATE DATABASE neutron;
 # 分配访问权限
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' \
@@ -1162,10 +1215,11 @@ GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' \
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' \
   IDENTIFIED BY 'root';
 </code></pre>
+</div>
 
 <p>2.在keystone中创建neutron服务以及endpoint</p>
 
-<pre><code># 创建neutron用户
+<div class="highlighter-rouge"><pre class="highlight"><code># 创建neutron用户
 root@controller:~# openstack user create --domain default --password-prompt neutron
 User Password:
 Repeat User Password:
@@ -1240,17 +1294,19 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:9696           |
 +--------------+----------------------------------+
 </code></pre>
+</div>
 
 <p>3.安装neutron软件（根据Self-service网络方式）</p>
 
-<pre><code>apt-get install neutron-server neutron-plugin-ml2 \
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install neutron-server neutron-plugin-ml2 \
   neutron-plugin-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent \
     neutron-metadata-agent python-neutronclient conntrack
 </code></pre>
+</div>
 
 <p>4.修改配置文件/etc/neutron/neutron.conf</p>
 
-<pre><code>[database]
+<div class="highlighter-rouge"><pre class="highlight"><code>[database]
 ...
 connection = mysql+pymysql://neutron:root@controller/neutron
 
@@ -1298,10 +1354,11 @@ project_name = service
 username = nova
 password = NOVA_PASS
 </code></pre>
+</div>
 
 <p>5.修改配置文件/etc/neutron/plugins/ml2/ml2_conf.ini</p>
 
-<pre><code>[ml2]
+<div class="highlighter-rouge"><pre class="highlight"><code>[ml2]
 ...
 type_drivers = flat,vlan,vxlan
 ...
@@ -1323,10 +1380,11 @@ vni_ranges = 1:1000
 ...
 enable_ipset = True
 </code></pre>
+</div>
 
 <p>6.修改配置文件/etc/neutron/plugins/ml2/linuxbridge_agent.ini</p>
 
-<pre><code>[linux_bridge]
+<div class="highlighter-rouge"><pre class="highlight"><code>[linux_bridge]
 physical_interface_mappings = public:eth0
 
 [vxlan]
@@ -1343,19 +1401,21 @@ prevent_arp_spoofing = True
 enable_security_group = True
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 </code></pre>
+</div>
 
 <p>7.修改配置文件/etc/neutron/l3_agent.ini</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
 ...
 verbose = True
 </code></pre>
+</div>
 
 <p>8.修改配置文件/etc/neutron/dhcp_agent.ini</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
@@ -1368,10 +1428,11 @@ dnsmasq_config_file = /etc/neutron/dnsmasq-neutron.conf
 # 创建文件/etc/neutron/dnsmasq-neutron.conf并写入如下内容
 dhcp-option-force=26,1450
 </code></pre>
+</div>
 
 <p>9.修改配置文件/etc/neutron/metadata_agent.ini</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 auth_uri = http://controller:5000
 auth_url = http://controller:35357
@@ -1389,10 +1450,11 @@ metadata_proxy_shared_secret = root
 ...
 verbose = True
 </code></pre>
+</div>
 
 <p>10.修改配置文件/etc/nova/nova.conf</p>
 
-<pre><code>[neutron]
+<div class="highlighter-rouge"><pre class="highlight"><code>[neutron]
 ...
 url = http://controller:9696
 auth_url = http://controller:35357
@@ -1407,30 +1469,34 @@ password = root
 service_metadata_proxy = True
 metadata_proxy_shared_secret = root
 </code></pre>
+</div>
 
 <p>11.同步数据库</p>
 
-<pre><code>su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+<div class="highlighter-rouge"><pre class="highlight"><code>su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
 </code></pre>
+</div>
 
 <p>12.重启服务</p>
 
-<pre><code># 重启nova
+<div class="highlighter-rouge"><pre class="highlight"><code># 重启nova
 service nova-api restart
 # 重启neutron
 </code></pre>
+</div>
 
 <h4 id="section-14">安装计算节点</h4>
 
 <p>1.安装软件包</p>
 
-<pre><code>apt-get install neutron-plugin-linuxbridge-agent conntrack
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install neutron-plugin-linuxbridge-agent conntrack
 </code></pre>
+</div>
 
 <p>2.修改配置文件/etc/neutron/neutron.conf</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
 ...
 rpc_backend = rabbit
 ...
@@ -1455,10 +1521,11 @@ project_name = service
 username = neutron
 password = root
 </code></pre>
+</div>
 
 <p>3.修改配置文件/etc/neutron/plugins/ml2/linuxbridge_agent.ini</p>
 
-<pre><code>[linux_bridge]
+<div class="highlighter-rouge"><pre class="highlight"><code>[linux_bridge]
 physical_interface_mappings = public:eth0
 
 [vxlan]
@@ -1475,10 +1542,11 @@ prevent_arp_spoofing = True
 enable_security_group = True
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 </code></pre>
+</div>
 
 <p>4.修改配置文件/etc/nova/nova.conf</p>
 
-<pre><code>[neutron]
+<div class="highlighter-rouge"><pre class="highlight"><code>[neutron]
 ...
 url = http://controller:9696
 auth_url = http://controller:35357
@@ -1490,18 +1558,20 @@ project_name = service
 username = neutron
 password = root
 </code></pre>
+</div>
 
 <p>5.重启服务</p>
 
-<pre><code># 重启nova-compute
+<div class="highlighter-rouge"><pre class="highlight"><code># 重启nova-compute
 service nova-compute restart
 # 重启网络服务
 service neutron-plugin-linuxbridge-agent restart
 </code></pre>
+</div>
 
 <p>6.验证</p>
 
-<pre><code># 验证是否成功加载插件
+<div class="highlighter-rouge"><pre class="highlight"><code># 验证是否成功加载插件
 root@controller:~# neutron ext-list
 +-----------------------+-----------------------------------------------+
 | alias                 | name                                          |
@@ -1541,17 +1611,19 @@ root@controller:~# neutron agent-list
 | dbbb522e-a424-4606-8a69-77250154e5d3 | Linux bridge agent | compute    | :-)   | True           | neutron-linuxbridge-agent |
 +--------------------------------------+--------------------+------------+-------+----------------+---------------------------+
 </code></pre>
+</div>
 
 <h3 id="horizon">安装面板服务horizon</h3>
 
 <p>1.安装horizon软件包</p>
 
-<pre><code>apt-get install openstack-dashboard
+<div class="highlighter-rouge"><pre class="highlight"><code>apt-get install openstack-dashboard
 </code></pre>
+</div>
 
 <p>2.修改配置文件</p>
 
-<pre><code>OPENSTACK_HOST = "controller"
+<div class="highlighter-rouge"><pre class="highlight"><code>OPENSTACK_HOST = "controller"
 ALLOWED_HOSTS = ['*', ]
 CACHES = {
     'default': {
@@ -1577,11 +1649,13 @@ OPENSTACK_NEUTRON_NETWORK = {
 }
 TIME_ZONE = "TIME_ZONE"
 </code></pre>
+</div>
 
 <p>3.验证面板</p>
 
-<pre><code>登入面板测试面板可用性
+<div class="highlighter-rouge"><pre class="highlight"><code>登入面板测试面板可用性
 </code></pre>
+</div>
 
   </article>
   
@@ -1625,15 +1699,15 @@ TIME_ZONE = "TIME_ZONE"
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
       <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
     
       <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
     
-      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
-    
       <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
     
-      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
     
   </ul>
 </div>

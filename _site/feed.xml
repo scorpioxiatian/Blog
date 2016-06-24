@@ -6,9 +6,233 @@
 </description>
     <link>http://www.pisces.ml/</link>
     <atom:link href="http://www.pisces.ml/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 22 May 2016 23:53:37 +0800</pubDate>
-    <lastBuildDate>Sun, 22 May 2016 23:53:37 +0800</lastBuildDate>
-    <generator>Jekyll v2.5.3</generator>
+    <pubDate>Fri, 24 Jun 2016 11:54:42 +0800</pubDate>
+    <lastBuildDate>Fri, 24 Jun 2016 11:54:42 +0800</lastBuildDate>
+    <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>Keystone对接ActiveDirectory</title>
+        <description>&lt;p&gt;keystone对接AD(ActiveDirectory)，本文记录对接配置过程&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;简介&lt;/h2&gt;
+
+&lt;p&gt;AD，指Windows的Active Directory，是LDAP协议的另一个实现，Keystone也可以和AD进行对接。&lt;/p&gt;
+
+&lt;h2 id=&quot;ad&quot;&gt;AD服务安装配置&lt;/h2&gt;
+
+&lt;p&gt;首先我们需要配置好AD，以用来对接keystone。&lt;/p&gt;
+
+&lt;h3 id=&quot;ad-1&quot;&gt;安装AD服务&lt;/h3&gt;
+
+&lt;p&gt;在window server 中安装AD服务，该过程可参考（https://support.rackspace.com/how-to/installing-active-directory-on-windows-server-2012/）这里不再细说。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;数据初始化&lt;/h3&gt;
+
+&lt;p&gt;AD服务安装完成后会生成Users的容器，该容器存放用户的分组以及用户。如下图所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/image2016-5-23-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;当然对于keystone我们也可以使用这种模式，将用户和分组同时都放在容器Users中，但是这样做会显的很乱。一种做法是我们可以单独给用户生成一个类似的容器来存放所有用户信息，也给分组生成一个容器来存放所有分组(当然也可以根据客户现在的账户体系进行规划，这里只做示例用)，如下步骤所示分别建立两个容器来存放用户和分组：&lt;/p&gt;
+
+&lt;p&gt;第一步：在根目录ustack下点击新建，容器类型为‘组织单位’&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/image2016-5-23-2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;第二步：生成Keystone_Users容器&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/image2016-5-23-3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;同样的方式创建容器Keystone_Groups来存放分组，新建完成后如下所示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/mage2016-5-23-4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;完成之后我们需要在容器Keystone_Users和Keystone_Groups中分别创建用户和分组，示例（在Keystone_Users新建用户）：
+进入容器Keystone_Users，右击新建－用户，填上必要的用户信息确认即可，如下图所示&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/image2016-5-23-5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;同样的方式可以建立相应的分组，并将用户添加到该分组中。&lt;/p&gt;
+
+&lt;h2 id=&quot;keystone&quot;&gt;keystone的安装和配置&lt;/h2&gt;
+
+&lt;h3 id=&quot;keysotne&quot;&gt;keysotne安装&lt;/h3&gt;
+
+&lt;p&gt;keystone安装过程主要是根据社区文档进行安装部署即可，参考：&lt;/p&gt;
+
+&lt;p&gt;SUSE: &lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-obs/index.html&quot;&gt;http://docs.openstack.org/mitaka/install-guide-obs/index.html&lt;/a&gt; 主要执行以下步骤来安装配置keystone&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-obs/environment-packages.html&quot;&gt;添加软件源并安装包python-openstackclient&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-obs/environment-sql-database.html&quot;&gt;安装数据库&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-obs/environment-memcached.html&quot;&gt;安装memcache服务器&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-obs/keystone.html&quot;&gt;安装keystone&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Ubuntu:&lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-ubuntu/&quot;&gt;http://docs.openstack.org/mitaka/install-guide-ubuntu/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Red Hat Enterprise Linux 7 and CentOS7: &lt;a href=&quot;http://docs.openstack.org/mitaka/install-guide-rdo/&quot;&gt;http://docs.openstack.org/mitaka/install-guide-rdo/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;keystonead&quot;&gt;keystone对接AD配置&lt;/h3&gt;
+
+&lt;p&gt;第一步：source keystone证书文件openrc(v3版本)，该文件内容如下所示：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@ldap:~# cat openrc_v3
+export OS_PROJECT_DOMAIN_NAME=default
+export OS_USER_DOMAIN_NAME=default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=root
+export OS_AUTH_URL=http://127.0.0.1:35357/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第二步：在路径’/etc/keystone/’下创建domains目录，并修改用户权限&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;＃　新建目录
+mkdir /etc/keystone/domains/
+＃　修改权限
+chown keystone /etc/keystone/domains/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第三步：修改配置文件keystone.conf，做如下修改&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 文件位置　/etc/keystone
+[identity]
+domain_specific_drivers_enabled = true
+domain_config_dir = /etc/keystone/domains
+[assignment]
+driver = keystone.assignment.backends.sql.Assignment
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第四步：查看AD server的NetBIOS name 作为AD DS的域&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PS C:\&amp;gt; Get-ADDomain | select NetBIOSName
+NetBIOSName
+-----------
+USTACK
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;由上所示我们可以看到NetBIOS name 为USTACK&lt;/p&gt;
+
+&lt;p&gt;第五步：用openstack命令创建AD 用户域&lt;/p&gt;
+
+&lt;p&gt;使用上步骤得到的NetBIOSName作为keystone账户中的域名。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;openstack domain create  USTACK
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第五步：在/etc/keystone/domains/下创建文件keystone.USTACK.conf（注意该文件的命名必须格式keystone.{NetBIOSName}.conf）并做如下配置：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ldap]
+url = ldap://172.16.10.13
+user = cn=chengkun,cn=Users,dc=ustack,dc=test
+password = Ustack2016
+suffix = dc=ustack,dc=test
+user_tree_dn = cn=Users,dc=ustack,dc=test
+# user_filter = (memberOf=cn=ustack_admin,OU=UserGroups,DC=ustack,DC=test)
+user_objectclass = person
+user_id_attribute = sAMAccountName
+user_name_attribute = sAMAccountName
+user_mail_attribute = mail
+user_pass_attribute =
+user_enabled_attribute = userAccountControl
+user_enabled_mask = 2
+user_enabled_default = 512
+user_attribute_ignore = password,tenant_id,tenants
+user_allow_create = false
+user_allow_update = false
+user_allow_delete = false
+group_tree_dn = OU=UserGroups,DC=ustack,DC=test
+# group_tree_dn = cn=Users,dc=ustack,dc=test
+group_objectclass = group
+group_id_attribute = cn
+group_name_attribute = cn
+group_allow_create = False
+group_allow_update = False
+group_allow_delete = False
+[identity]
+driver = keystone.identity.backends.ldap.Identity
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;注意上面配置的用户信息根据实际用户信息填写即可。&lt;/p&gt;
+
+&lt;p&gt;修改该文件权限：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chown keystone /etc/keystone/domains/keystone.LAB.conf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第六步：给AD账户domain分配权限&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#查看domain id
+[root@localhost ~]# openstack domain show USTACK
++---------+----------------------------------+
+| Field   | Value                            |
++---------+----------------------------------+
+| enabled | True                             |
+| id      | 1954d71a8445418482b4d3966e6a8cfe |
+| name    | USTACK                           |
++---------+----------------------------------+
+#查询admin用户id
+[root@localhost ~]# openstack user list --domain default | grep admin
+| 8ef5b603ae1344cea4fe060d198d42ad | admin |
+
+#给用户admin在domain USTACK中添加admin的role
+openstack role add --domain 1954d71a8445418482b4d3966e6a8cfe --user 8ef5b603ae1344cea4fe060d198d42ad admin
+
+#可以通过以下命令查看是否已经添加上
+[root@localhost ~]# openstack role assignment list | grep 1954d71a8445418482b4d3966e6a8cfe | grep 8ef5b603ae1344cea4fe060d198d42ad
+| 9d9bb1f3f9e84e999cc18f99fd901398 | 8ef5b603ae1344cea4fe060d198d42ad                                 |                                  |                                  | 1954d71a8445418482b4d3966e6a8cfe |
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;第七步：重启keystone服务&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 注：如果keystone跑在httpd上，直接重启httpd服务即可
+systemctl restart openstack-keystone.service
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;参考资料&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;https://docs.hpcloud.com/commercial/GA1/1.1commerical.services-identity-integrate-ldap.html#topic9275__connect&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;https://access.redhat.com/documentation/en/red-hat-enterprise-linux-openstack-platform/7/integrate-with-identity-service/chapter-1-active-directory-integration&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;https://technet.microsoft.com/en-us/library/ee617195.aspx&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;http://windowsitpro.com/powershell/top-10-active-directory-tasks-solved-powershell&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Thu, 02 Jun 2016 17:00:13 +0800</pubDate>
+        <link>http://www.pisces.ml/articles/openstack/2016602</link>
+        <guid isPermaLink="true">http://www.pisces.ml/articles/openstack/2016602</guid>
+        
+        
+        <category>openstack</category>
+        
+      </item>
     
       <item>
         <title>tcpdump命令详解</title>
@@ -22,27 +246,29 @@
 
 &lt;p&gt;tcpdump [-i 网卡] -nnAX ‘表达式’&lt;/p&gt;
 
-&lt;p&gt;参数意义：&lt;br /&gt;
--i: interface 监听的网卡&lt;br /&gt;
--nn：表示以ip和port的方式显示来源主机和目的主机，而不是用主机名和服务&lt;br /&gt;
--A：以ascii的方式显示数据包，抓取web数据时很有用&lt;br /&gt;
+&lt;p&gt;参数意义：
+-i: interface 监听的网卡
+-nn：表示以ip和port的方式显示来源主机和目的主机，而不是用主机名和服务
+-A：以ascii的方式显示数据包，抓取web数据时很有用
 -X：数据包将会以16进制和ascii的方式显示（这样显示有什么好处？）&lt;/p&gt;
 
 &lt;p&gt;表达式：表达式有很多种，常见的有：host 主机；port 端口；src host 发包主机；dst host 收包主机。多个条件可以用and、or组合，取反可以使用!，更多的使用可以查看man 7 pcap-filter。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;监听网卡&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;# 监听eth0网卡
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 监听eth0网卡
 tcpdump -i eth0
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;可以使用ifconfig命令来查看网卡信息，以便通过tcpdump命令来监听相应网卡。&lt;/p&gt;
 
 &lt;h2 id=&quot;section-1&quot;&gt;监听指定协议的数据&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;# 表示监听eth0网卡，并且只接收icmp协议数据
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 表示监听eth0网卡，并且只接收icmp协议数据
 tcpdump -i eth0 -nn &#39;icmp&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;监听icmp协议类型数据，icmp即ping命令使用的协议。常用的协议类型有tcp,udp等。&lt;/p&gt;
 
@@ -56,37 +282,43 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
 
 &lt;h2 id=&quot;section-2&quot;&gt;监听指定的主机&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;host 192.168.1.231&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;host 192.168.1.231&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;该命令表示抓取主机192.168.1.231的发送包和接收包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;src host 192.168.1.231&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;src host 192.168.1.231&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;表示只抓取主机192.168.1.231发送的包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;dst host 192.168.1.231&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nn &#39;dst host 192.168.1.231&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;表示只抓取主机192.168.1.231接收到的包&lt;/p&gt;
 
 &lt;h2 id=&quot;section-3&quot;&gt;监听指定端口&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;p&gt;该命令表示抓取80端口的数据包，并以ascii的方式显示数据包，在web开发中很实用&lt;/p&gt;
 
 &lt;h2 id=&quot;section-4&quot;&gt;监听指定主机和端口&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80 and src host 192.168.1.231&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;port 80 and src host 192.168.1.231&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;p&gt;多个条件可以用and，or连接。上例表示监听192.168.1.231主机通过80端口发送的数据包。&lt;/p&gt;
 
 &lt;h2 id=&quot;section-5&quot;&gt;监听除某个端口外的其它端口&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;!port 22&#39;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tcpdump -i eth0 -nnA &#39;!port 22&#39;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;如果需要排除某个端口或者主机，可以使用“!”符号，上例表示监听非22端口的数据包。&lt;/p&gt;
 
@@ -98,6 +330,8 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
         <link>http://www.pisces.ml/articles/linux/2016522</link>
         <guid isPermaLink="true">http://www.pisces.ml/articles/linux/2016522</guid>
         
+        
+        <category>linux</category>
         
       </item>
     
@@ -158,7 +392,7 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
 
 &lt;p&gt;目录结构&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;├── assignment
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;├── assignment
 │   ├── backends
 │   ├── controllers.py
 │   ├── controllers.pyc
@@ -207,20 +441,21 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
 │   └── manage.pyc
 ......
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;ol&gt;
   &lt;li&gt;cmd目录下(主要存放命令行工具)：
     &lt;ul&gt;
       &lt;li&gt;keystone-all（本地启动服务监听35357和5000端口）&lt;/li&gt;
-      &lt;li&gt;keystone-manage（keystone综合管理工具&lt;br /&gt;
-  a. db_sync:初始化数据库&lt;br /&gt;
-  b. db_version：打印数据库迁移版本&lt;br /&gt;
-  c. fernet_rotate：Rotate Fernet encryption keys。&lt;br /&gt;
-  d. fernet_setup：Setup a key repository for Fernet tokens&lt;br /&gt;
-  e. mapping_purge:清空mapping表&lt;br /&gt;
-  f. pki_setup：初始化生成密钥对和证书文件&lt;br /&gt;
-  g. saml_idp_metadata：生成Identity Provider的metadata&lt;br /&gt;
-  h. ssl_setup ：为https链接生成密钥对和证书&lt;br /&gt;
+      &lt;li&gt;keystone-manage（keystone综合管理工具
+  a. db_sync:初始化数据库
+  b. db_version：打印数据库迁移版本
+  c. fernet_rotate：Rotate Fernet encryption keys。
+  d. fernet_setup：Setup a key repository for Fernet tokens
+  e. mapping_purge:清空mapping表
+  f. pki_setup：初始化生成密钥对和证书文件
+  g. saml_idp_metadata：生成Identity Provider的metadata
+  h. ssl_setup ：为https链接生成密钥对和证书
   i. token_flush ：清除过期token&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
@@ -267,17 +502,17 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
 
 &lt;p&gt;&lt;img src=&quot;http://www.pisces.ml/images/RESTFul_API.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;keystone是基于python WSGI框架实现的web应用，通过paste组织web应用服务网络，对外提供REST Api，主要提供了提供 Identity、Token、Catalog 、Resource、Assignment和 Policy 服务：&lt;br /&gt;
-* Identity服务验证了身份验证凭证，并提供了所有相关的元数据。&lt;br /&gt;
-* Token服务验证并管理用于验证请求身份的令牌。&lt;br /&gt;
-* Catalog服务提供了可用于端点发现的服务注册表。&lt;br /&gt;
-* Policy服务暴露了一个基于规则的身份验证引擎。&lt;br /&gt;
-* Resource服务提供资源包括project/domain&lt;br /&gt;
+&lt;p&gt;keystone是基于python WSGI框架实现的web应用，通过paste组织web应用服务网络，对外提供REST Api，主要提供了提供 Identity、Token、Catalog 、Resource、Assignment和 Policy 服务：
+* Identity服务验证了身份验证凭证，并提供了所有相关的元数据。
+* Token服务验证并管理用于验证请求身份的令牌。
+* Catalog服务提供了可用于端点发现的服务注册表。
+* Policy服务暴露了一个基于规则的身份验证引擎。
+* Resource服务提供资源包括project/domain
 * Assignment服务分配角色&lt;/p&gt;
 
 &lt;p&gt;每个 Keystone 功能都支持用于集成到异构环境并展示不同功能的后端插件。通过下表我们看下各个服务所管理的对象：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
 |:-----:|:-----:|:-----:|:-----:|:-----:|
 | identity | keystone.identity.controllers.Groupl3 keystone.identity.controllers.UserV3 | -- | ldap/sql | [identity] driver = sql|
 | Token | keystone.token.controllers.Auth | uuid/pki/pkiz/fernet | kvs/sql/memcache/memcache_pool | [token] provider = uuid/pki/pkiz/fernet driver = sql/memcache/memcache_pool |
@@ -287,18 +522,19 @@ tcpdump -i eth0 -nn &#39;icmp&#39;
 | Assignment | keystone.assignment.controllers.GrantAssignmentV3 keystone.assignment.controllers.ProjectAssignmentV3 keystone.assignment.controllers.TenantAssignment keystone.assignment.controllers.Role keystone.assignment.controllers.RoleAssignmentV2 keystone.assignment.controllers.RoleAssignmentV3 keystone.assignment.controllers.RoleV3 | -- | sql/ldap | [assignment] driver=sql/ldap |
 | Authentication | keystone.auth.controllers.Auth | password/saml2/token/oauth1 | -- | [auth] methods=external,password,token,oauth1 password=keystone.auth.plugins.password.Password token=keystone.auth.plugins.token.Token |
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h2 id=&quot;section-6&quot;&gt;安装配置&lt;/h2&gt;
 
 &lt;h3 id=&quot;section-7&quot;&gt;软件安装&lt;/h3&gt;
 
-&lt;p&gt;可以通过两种方式安装keystone:&lt;br /&gt;
-* 源码安装&lt;br /&gt;
+&lt;p&gt;可以通过两种方式安装keystone:
+* 源码安装
 * 软件包安装&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;源码安装（本地环境）&lt;/em&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;$ git clone https://git.openstack.org/openstack/keystone.git　#拷贝源码
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git clone https://git.openstack.org/openstack/keystone.git　#拷贝源码
 $ cd keystone/ &amp;amp;&amp;amp; virtualenv .venv #进入软件包，创建本地隔离环境
 $ source .venv/bin/activate
 $ pip install -r requirements.txt　＃安装软件依赖包
@@ -306,10 +542,11 @@ $ python setup.py install/develop　＃可以根据需要选择已哪种方式�
 $ vim /etc/keystone/keystone.conf　＃根据具体需求配置keystone，可参考官方配置文档：http://docs.openstack.org/developer/keystone/configuration.html
 # 初始化数据库: keystone-manage --config-file etc/keystone.conf db_sync
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;&lt;em&gt;软件包安装&lt;/em&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;＃Ubuntu
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;＃Ubuntu
 $ sudo apt-get install keystone
 # Fedora
 $ sudo yum install openstack-keystone
@@ -317,6 +554,7 @@ $ sudo yum install openstack-keystone
 # 配置keystone配置文件keystone.conf
 # 初始化数据库: keystone-manage --config-file etc/keystone.conf db_sync
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;section-8&quot;&gt;配置说明&lt;/h3&gt;
 
@@ -332,7 +570,7 @@ $ sudo yum install openstack-keystone
 
 &lt;p&gt;keystone.conf 中主要配置选项说明:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
    admin_token = ADMIN   # 定义一个超级管理员的token, 使用此token可以绕过权限检查直接操作所有接口, 此参数应该只在安装完keystone后创建初始账户时使用, 生产环境中应该被禁用, 禁用方法为: 在keystone-paste.ini中将所有pipeline中的admin_token_auth这个filter删掉.
 debug = False # 打印debug级别的日志
 verbose = False  # 打印info级别的日志 ,
@@ -371,25 +609,26 @@ connection = mysql://root:root@localhost/keystone  # 定义数据库连接, 如�
 enabled = True  # 日否开启os_inherit 扩展, 官方对此扩展的说明文档: https://github.com/openstack/identity-api/blob/master/v3/src/markdown/identity-api-v3-os-inherit-ext.md
 所有参数的默认值定义都在keystone/common/config.py中
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h2 id=&quot;fqa&quot;&gt;FQA&lt;/h2&gt;
 
-&lt;p&gt;Ｑ：keystone的35357和5000端口有什么区别?&lt;br /&gt;
-Ａ：在keystone的 v3 api中35357 和5000 没有任何区别, 建议统一只使用35357端口, 在v2.0的api中, 5000是public api的端口,35357是admin api的端口, 两者提供api的具体差别可以看keystone-paste.ini中的[pipeline:public_api] 和[pipeline:admin_api].&lt;br /&gt;
-Ｑ：如何开启一个默认未启用的扩展?&lt;br /&gt;
-Ａ：keystone的扩展,都以filter的形式在keystone-paste.ini中定义, 需要开启只需要将其加入相应的pipeline中,注意的是有些扩展还依赖一些数据库表, 这些表默认安装是不会生成的, 需要用keystone-manage 命令额外初始化.&lt;br /&gt;
-比如要启用oauth1扩展, 此扩展有自己的数据库表:&lt;br /&gt;
+&lt;p&gt;Ｑ：keystone的35357和5000端口有什么区别?
+Ａ：在keystone的 v3 api中35357 和5000 没有任何区别, 建议统一只使用35357端口, 在v2.0的api中, 5000是public api的端口,35357是admin api的端口, 两者提供api的具体差别可以看keystone-paste.ini中的[pipeline:public_api] 和[pipeline:admin_api].
+Ｑ：如何开启一个默认未启用的扩展?
+Ａ：keystone的扩展,都以filter的形式在keystone-paste.ini中定义, 需要开启只需要将其加入相应的pipeline中,注意的是有些扩展还依赖一些数据库表, 这些表默认安装是不会生成的, 需要用keystone-manage 命令额外初始化.
+比如要启用oauth1扩展, 此扩展有自己的数据库表:
 oauth1在keystone-paste.ini中的定义为[filter:oauth1_extension], 将其加入[pipeline:api_v3], 顺序最好放在service_v3之前. PS: 有些扩展只支持v2.0 api,有些只支持v3 api,实际情况可以查看它们的实现,比如oauth1: keystone.contrib.oauth1.controllers, 其中所有的controller都是继承自V3Controller, 则此api只能在v3下使用. keystone-manage –config-file etc/keystone.conf db_sync –extension oauth1 接下来即可使用oauth1扩展定义的api了.&lt;/p&gt;
 
 &lt;h2 id=&quot;section-9&quot;&gt;参考文档&lt;/h2&gt;
 
-&lt;p&gt;http://docs.openstack.org/developer/keystone/&lt;br /&gt;
-http://docs.openstack.org/developer/keystone/architecture.html#application-construction&lt;br /&gt;
-http://docs.openstack.org/developer/keystone/installing.html&lt;br /&gt;
-http://docs.openstack.org/developer/keystone/developing.html&lt;br /&gt;
-http://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-keystone/index.html&lt;br /&gt;
-https://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-pythonapis/&lt;br /&gt;
-http://www.cnblogs.com/sammyliu/p/4272611.html&lt;br /&gt;
+&lt;p&gt;http://docs.openstack.org/developer/keystone/
+http://docs.openstack.org/developer/keystone/architecture.html#application-construction
+http://docs.openstack.org/developer/keystone/installing.html
+http://docs.openstack.org/developer/keystone/developing.html
+http://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-keystone/index.html
+https://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-pythonapis/
+http://www.cnblogs.com/sammyliu/p/4272611.html
 http://blog.csdn.net/hzrandd/article/details/10834381&lt;/p&gt;
 
 </description>
@@ -399,6 +638,85 @@ http://blog.csdn.net/hzrandd/article/details/10834381&lt;/p&gt;
         
         
         <category>openstack</category>
+        
+      </item>
+    
+      <item>
+        <title>linux病毒扫描软件ClamAV安装于使用</title>
+        <description>&lt;p&gt;近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，
+根据该现象有可能是ddos攻击导致。于是上网查了一些杀毒软件，试图kill掉该病毒。网上查询到了一款ubuntu上的开源杀毒软件，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV。&lt;/p&gt;
+
+&lt;h2 id=&quot;clamav&quot;&gt;什么是clamAV&lt;/h2&gt;
+
+&lt;p&gt;clamAV全名Clam AntiVirus，是一款开源的杀毒软件，能够预防许多的恶意软件主要应用于邮件服务器。扫描并清理系统中的恶意软件。&lt;/p&gt;
+
+&lt;p&gt;clamAV包含了大量的实用程序如：命令行扫描，自动跟新数据库和可扩展多线程守护进程，以及反病毒引擎。&lt;/p&gt;
+
+&lt;p&gt;接下来我们就来介绍下clamAV的安装和使用。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;安装＆配置&lt;/h2&gt;
+
+&lt;p&gt;1.安装软件包&lt;/p&gt;
+
+&lt;p&gt;clamAV安装方法有很多可以直接去官网&lt;a href=&quot;http://www.clamav.net/download.html&quot;&gt;下载&lt;/a&gt;并进行安装，为了方便我们可以直接执行以下命令直接在ubuntu系统中安装该软件包：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 如果安装不了我们可以先更新下软件源`apt-get update`
+sudo apt-get install clamav clamav-daemon
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;2.更新病毒数据库&lt;/p&gt;
+
+&lt;p&gt;安装完成后clamAV会提示你安装病毒数据库，clamAV会根据数据库中提供的数据对系统进行搜索查询，我们只需要执行以下命令来同步远程病毒数据库,该命令会下载main.cvd和daily.cvd文件。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo freshclam
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;clamav-1&quot;&gt;clamAV使用&lt;/h2&gt;
+
+&lt;p&gt;安装很简单，使用更简单，就一个&lt;code class=&quot;highlighter-rouge&quot;&gt;clamscan&lt;/code&gt;命令即可。示例：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 扫描/home目录下的文件
+clamscan -r /home
+
+# 全盘扫描(该命令可能执行时间比较长)
+clamscan -r /
+
+# 格式化输出，只输出显示病毒文件或者是恶意进程
+clamscan -r --bell -i /
+
+# 查询任意位置，并将结果写入新文件记录
+sudo clamscan -r /folder/to/scan/ | grep FOUND &amp;gt;&amp;gt; /path/to/save/report/myfile.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;如上命令会扫描目录，如果发现恶意软件或者病毒文件会自动清理&lt;/p&gt;
+
+&lt;p&gt;我们还可以为clamAV建立定时任务执行如下命令：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;crontab -e
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;并在定时任务中写入如下任务&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;另外如果你不习惯使用命令行，还可以使用clamAV的GUI界面，需要执行以下命令安装GUI&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get install ClamTK
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sun, 27 Mar 2016 17:00:13 +0800</pubDate>
+        <link>http://www.pisces.ml/articles/linux/2016328</link>
+        <guid isPermaLink="true">http://www.pisces.ml/articles/linux/2016328</guid>
+        
+        
+        <category>linux</category>
         
       </item>
     
@@ -481,7 +799,7 @@ http://blog.csdn.net/hzrandd/article/details/10834381&lt;/p&gt;
 
 &lt;p&gt;修改文件/etc/hosts,如下所示：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 控制节点编辑文件/etc/hosts
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 控制节点编辑文件/etc/hosts
 
 192.168.2.2 controller
 192.168.2.5 compute
@@ -490,22 +808,23 @@ http://blog.csdn.net/hzrandd/article/details/10834381&lt;/p&gt;
 192.168.2.2 controller
 192.168.2.5 compute
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;可以通过以下命令在控制节点和计算节点验证是否配置正确：&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;root@compute:~# ping controller&lt;br /&gt;
-PING controller (192.168.2.2) 56(84) bytes of data.&lt;br /&gt;
-64 bytes from controller (192.168.2.2): icmp_seq=1 ttl=64 time=0.407 ms&lt;br /&gt;
-64 bytes from controller (192.168.2.2): icmp_seq=2 ttl=64 time=0.508 ms&lt;br /&gt;
+  &lt;p&gt;root@compute:~# ping controller
+PING controller (192.168.2.2) 56(84) bytes of data.
+64 bytes from controller (192.168.2.2): icmp_seq=1 ttl=64 time=0.407 ms
+64 bytes from controller (192.168.2.2): icmp_seq=2 ttl=64 time=0.508 ms
 64 bytes from controller (192.168.2.2): icmp_seq=3 ttl=64 time=0.571 ms&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;root@compute:~# ping -c 4 openstack.org&lt;br /&gt;
-PING openstack.org (162.242.140.107) 56(84) bytes of data.&lt;br /&gt;
-64 bytes from 162.242.140.107: icmp_seq=1 ttl=42 time=386 ms&lt;br /&gt;
-64 bytes from 162.242.140.107: icmp_seq=2 ttl=42 time=384 ms&lt;br /&gt;
+  &lt;p&gt;root@compute:~# ping -c 4 openstack.org
+PING openstack.org (162.242.140.107) 56(84) bytes of data.
+64 bytes from 162.242.140.107: icmp_seq=1 ttl=42 time=386 ms
+64 bytes from 162.242.140.107: icmp_seq=2 ttl=42 time=384 ms
 64 bytes from 162.242.140.107: icmp_seq=3 ttl=42 time=386 ms&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -517,31 +836,35 @@ PING openstack.org (162.242.140.107) 56(84) bytes of data.&lt;br /&gt;
 
 &lt;p&gt;1.安装chrony包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install chrony
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install chrony
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.编辑文件/etc/chrony/chrony.conf插入以下内容&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 以asia.pool.ntp.org时间为例
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 以asia.pool.ntp.org时间为例
 server asia.pool.ntp.org iburst
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.重启NTP服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;service chrony restart
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;service chrony restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;计算节点compute：&lt;/p&gt;
 
 &lt;p&gt;安装步骤跟控制节点一样，在编辑/etc/chrony/chrony.conf文件时需要插入以下内容：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 表示跟controller节点时间同步
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 表示跟controller节点时间同步
 server controller iburst
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;验证：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# *表示当前所用的时间
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# *表示当前所用的时间
 # 控制节点
 root@controller:~# chronyc sources
 210 Number of sources = 1
@@ -556,6 +879,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 ===============================================================================
 ^* controller                    5   6   377    36  +4607us[  +27ms] +/-  734ms
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;openstack&quot;&gt;安装openstack软件包支持&lt;/h4&gt;
 
@@ -569,15 +893,16 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 
 &lt;p&gt;执行命令：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get dist-upgrade
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get dist-upgrade
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;如果出现如下错误：&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;error:&lt;br /&gt;
-W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty Release: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY 5EDB1B62EC4926EA&lt;br /&gt;
-执行命令&lt;code&gt;apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA&lt;/code&gt;后在运行&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get dist-upgrade&lt;/code&gt;&lt;/p&gt;
+  &lt;p&gt;error:
+W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty Release: The following signatures couldn’t be verified because the public key is not available: NO_PUBKEY 5EDB1B62EC4926EA
+执行命令&lt;code class=&quot;highlighter-rouge&quot;&gt;apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5EDB1B62EC4926EA&lt;/code&gt;后在运行&lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get update &amp;amp;&amp;amp; apt-get dist-upgrade&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h4 id=&quot;sql&quot;&gt;安装SQL数据库&lt;/h4&gt;
@@ -586,36 +911,42 @@ W: GPG error: http://ubuntu-cloud.archive.canonical.com trusty-updates/liberty R
 
 &lt;p&gt;1.安装sql包,并且设置root用户密码&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install mariadb-server python-pymysql
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install mariadb-server python-pymysql
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.修改文件/etc/mysql/my.cnf并添加如下内容允许所有节点请求。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[mysqld]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[mysqld]
 bind-address = 0.0.0.0
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.重启sql服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;service mysql restart
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;service mysql restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;rabbitmq&quot;&gt;安装消息队列rabbitmq&lt;/h4&gt;
 
 &lt;p&gt;1.安装rabbitmq软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install rabbitmq-server
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install rabbitmq-server
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.添加openstack用户&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;rabbitmqctl add_user openstack root
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rabbitmqctl add_user openstack root
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.给openstack用户添加读写权限&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;rabbitmqctl set_permissions openstack &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rabbitmqctl set_permissions openstack &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h2 id=&quot;openstack-1&quot;&gt;安装openstack软件&lt;/h2&gt;
 
@@ -627,44 +958,49 @@ bind-address = 0.0.0.0
 
 &lt;p&gt;1.登入数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;mysql -uroot
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql -uroot
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.创建keystone数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;CREATE DATABASE keystone;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CREATE DATABASE keystone;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.添加数据库访问权限&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;GRANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;localhost&#39; \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GRANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;localhost&#39; \
   IDENTIFIED BY &#39;root&#39;;
 GRANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;%&#39; \
   IDENTIFIED BY &#39;root&#39;;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;admin-token&quot;&gt;随机生成admin token&lt;/h4&gt;
 
 &lt;p&gt;执行以下命令生成admin token以便后续步骤使用&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~# openssl rand -hex 10
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~# openssl rand -hex 10
 e770648f049dd983575b
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;keystone-2&quot;&gt;安装keystone服务&lt;/h4&gt;
 
 &lt;p&gt;1.从源安装keystone&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 禁止安装完后启动服务
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 禁止安装完后启动服务
 echo &quot;manual&quot; &amp;gt; /etc/init/keystone.override
 
 apt-get install keystone apache2 libapache2-mod-wsgi \
   memcached python-memcache
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.配置keystone配置文件/etc/keystone/keystone.conf,修改以下配置&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 admin_token = e770648f049dd983575b
 
@@ -689,22 +1025,25 @@ driver = sql
 ...
 verbose = True
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.同步数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;su -s /bin/sh -c &quot;keystone-manage db_sync&quot; keystone
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;su -s /bin/sh -c &quot;keystone-manage db_sync&quot; keystone
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;apache&quot;&gt;配置apache服务器&lt;/h4&gt;
 
 &lt;p&gt;1.编辑文件/etc/apache2/apache2.conf修改Servername&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;ServerName controller
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ServerName controller
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.创建文件/etc/apache2/sites-available/wsgi-keystone.conf，并添加如下内容&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Listen 5000
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Listen 5000
 Listen 35357
 
 &amp;lt;VirtualHost *:5000&amp;gt;
@@ -753,26 +1092,29 @@ Listen 35357
     &amp;lt;/Directory&amp;gt;
 &amp;lt;/VirtualHost&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.允许加载keystone服务并重启apache服务器&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
 
 service apache2 restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;service-entityapi-endpoints&quot;&gt;创建service entity和API endpoints&lt;/h4&gt;
 
 &lt;p&gt;1.配置认证信息&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;export OS_TOKEN=e770648f049dd983575b
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export OS_TOKEN=e770648f049dd983575b
 export OS_URL=http://controller:35357/v3
 export OS_IDENTITY_API_VERSION=3
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.创建keystone服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~# openstack service create \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~# openstack service create \
 &amp;gt;   --name keystone --description &quot;OpenStack Identity&quot; identity
 +-------------+----------------------------------+
 | Field       | Value                            |
@@ -784,10 +1126,11 @@ export OS_IDENTITY_API_VERSION=3
 | type        | identity                         |
 +-------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.创建endpoints&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~# openstack endpoint create --region RegionOne \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~# openstack endpoint create --region RegionOne \
 &amp;gt;   identity public http://controller:5000/v2.0
 +--------------+----------------------------------+
 | Field        | Value                            |
@@ -835,12 +1178,13 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:35357/v2.0     |
 +--------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;projects-users-and-roles&quot;&gt;创建projects, users, and roles&lt;/h4&gt;
 
 &lt;p&gt;1.创建管理员用户&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建管理员项目
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建管理员项目
 root@controller:~# openstack project create --domain default \
 &amp;gt;   --description &quot;Admin Project&quot; admin
 +-------------+----------------------------------+
@@ -881,10 +1225,11 @@ root@controller:~# openstack role create admin
 # 添加权限
 root@controller:~# openstack role add --project admin --user admin admin
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.创建service项目&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~# openstack project create --domain default \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~# openstack project create --domain default \
 &amp;gt;   --description &quot;Service Project&quot; service
 +-------------+----------------------------------+
 | Field       | Value                            |
@@ -898,10 +1243,11 @@ root@controller:~# openstack role add --project admin --user admin admin
 | parent_id   | None                             |
 +-------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.创建普通用户&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建demo项目
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建demo项目
 root@controller:~# openstack project create --domain default \
 &amp;gt;   --description &quot;Demo Project&quot; demo
 +-------------+----------------------------------+
@@ -942,17 +1288,19 @@ root@controller:~# openstack role create user
 # 分配角色
 root@controller:~# openstack role add --project demo --user demo user
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;section-7&quot;&gt;验证配置&lt;/h4&gt;
 
 &lt;p&gt;1.清除原有环境变量&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;unset OS_TOKEN OS_URL
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;unset OS_TOKEN OS_URL
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.使用用户名密码获取token&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~#  openstack --os-auth-url http://controller:35357/v3 \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~#  openstack --os-auth-url http://controller:35357/v3 \
 &amp;gt;   --os-project-domain-id default --os-user-domain-id default \
 &amp;gt;   --os-project-name admin --os-username admin --os-auth-type password \
 &amp;gt;   token issue
@@ -966,12 +1314,13 @@ Password:
 | user_id    | 59a21d5fea5a42908d5911635eb92742 |
 +------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;openstack-2&quot;&gt;创建openstack命令行证书文件&lt;/h4&gt;
 
 &lt;p&gt;新建文件admin-openrc.sh，并添加如下内容：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;export OS_PROJECT_DOMAIN_ID=default
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_TENANT_NAME=admin
@@ -980,6 +1329,7 @@ export OS_PASSWORD=root #根据实际填写
 export OS_AUTH_URL=http://controller:35357/v3
 export OS_IDENTITY_API_VERSION=3
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;glance&quot;&gt;安装镜像服务glance&lt;/h3&gt;
 
@@ -987,7 +1337,7 @@ export OS_IDENTITY_API_VERSION=3
 
 &lt;p&gt;1.进入数据库服务创建glance数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建glance数据库
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建glance数据库
 CREATE DATABASE glance;
 
 分配相应的访问权限
@@ -996,15 +1346,17 @@ GRANT ALL PRIVILEGES ON glance.* TO &#39;glance&#39;@&#39;localhost&#39; \
 GRANT ALL PRIVILEGES ON glance.* TO &#39;glance&#39;@&#39;%&#39; \
   IDENTIFIED BY &#39;root&#39;;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.source证书文件admin-openrc.sh&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;root@controller:~# source admin-openrc.sh
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@controller:~# source admin-openrc.sh
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.在keystone中创建glance用户信息&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建glance用户
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建glance用户
 root@controller:~# openstack user create --domain default --password-prompt glance
 User Password:
 Repeat User Password:
@@ -1083,17 +1435,19 @@ root@controller:~#  openstack endpoint create --region RegionOne \
 | url          | http://controller:9292           |
 +--------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;glance-1&quot;&gt;安装配置glance软件包&lt;/h4&gt;
 
 &lt;p&gt;1.安装软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install glance python-glanceclient
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install glance python-glanceclient
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.修改配置文件/etc/glance/glance-api.conf和/etc/glance/glance-registry.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 修改文件/etc/glance/glance-api.conf
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 修改文件/etc/glance/glance-api.conf
 [database]
 ...
 connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
@@ -1150,15 +1504,17 @@ flavor = keystone
 notification_driver = noop
 verbose = True
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.同步glance数据库并重启服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 同步数据库
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 同步数据库
 su -s /bin/sh -c &quot;glance-manage db_sync&quot; glance
 # 重启服务
 service glance-registry restart
 service glance-api restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;p&lt;/p&gt;
 
@@ -1166,23 +1522,26 @@ service glance-api restart
 
 &lt;p&gt;1.将镜像版本信息写入证书文件admin-openrc.sh&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;echo &quot;export OS_IMAGE_API_VERSION=2&quot; \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo &quot;export OS_IMAGE_API_VERSION=2&quot; \
   | tee -a admin-openrc.sh
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.source文件admin-openrc.sh&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;source admin-openrc.sh
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;source admin-openrc.sh
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.下载测试镜像&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;4.在glance创建镜像&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建镜像
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建镜像
 root@controller:~# glance image-create --name &quot;cirros&quot; \
 &amp;gt;   --file cirros-0.3.4-x86_64-disk.img \
 &amp;gt;   --disk-format qcow2 --container-format bare \
@@ -1218,6 +1577,7 @@ root@controller:~# glance image-list
 | 67cfd037-5704-4432-9b2c-cf5fffdb6319 | cirros |
 +--------------------------------------+--------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;nova&quot;&gt;安装计算服务Nova&lt;/h3&gt;
 
@@ -1227,7 +1587,7 @@ root@controller:~# glance image-list
 
 &lt;p&gt;1.创建nova数据库，并分配权限&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建数据库
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建数据库
 CREATE DATABASE nova;
 
 # 分配访问权限
@@ -1236,10 +1596,11 @@ GRANT ALL PRIVILEGES ON nova.* TO &#39;nova&#39;@&#39;localhost&#39; \
 GRANT ALL PRIVILEGES ON nova.* TO &#39;nova&#39;@&#39;%&#39; \
   IDENTIFIED BY &#39;NOVA_DBPASS&#39;;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.在keystone中创建nova用户,服务以及endpoint&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建账户
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建账户
 root@controller:~# openstack user create --domain default --password-prompt nova
 User Password:
 Repeat User Password:
@@ -1317,19 +1678,21 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:8774/v2/%(tenant_id)s |
 +--------------+-----------------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h5 id=&quot;nova-1&quot;&gt;安装nova软件包并配置&lt;/h5&gt;
 
 &lt;p&gt;1.安装软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt; apt-get install nova-api nova-cert nova-conductor \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; apt-get install nova-api nova-cert nova-conductor \
    nova-consoleauth nova-novncproxy nova-scheduler \
      python-novaclient
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.编辑配置文件/etc/nova/nova.conf 修改以下配置&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[database]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[database]
 ...
 connection = mysql+pymysql://nova:root@controller/nova
 
@@ -1383,32 +1746,36 @@ host = controller
 ...
 lock_path = /var/lib/nova/tmp
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.同步数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;su -s /bin/sh -c &quot;nova-manage db sync&quot; nova
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;su -s /bin/sh -c &quot;nova-manage db sync&quot; nova
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;4.重启nova服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;service nova-api restart
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;service nova-api restart
 service nova-cert restart
 service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;section-11&quot;&gt;安装计算节点&lt;/h3&gt;
 
 &lt;p&gt;1.安装软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install nova-compute sysfsutils
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install nova-compute sysfsutils
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.修改配置文件/etc/nova/nova.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 rpc_backend = rabbit
 ...
@@ -1455,10 +1822,11 @@ host = controller
 ...
 lock_path = /var/lib/nova/tmp
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.验证是否支持虚拟化&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 执行以下命令如果返回０则表示不支持
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 执行以下命令如果返回０则表示不支持
 egrep -c &#39;(vmx|svm)&#39; /proc/cpuinfo
 
 # 我们的环境是在虚拟化环境中所以肯定不支持再次虚拟化，所以需要在/etc/nova/nova-compute.conf中做如下配置
@@ -1466,17 +1834,19 @@ egrep -c &#39;(vmx|svm)&#39; /proc/cpuinfo
 ...
 virt_type = qemu # 如果支持的话可以设置为kvm
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;4.重启nova compute服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;service nova-compute restart
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;service nova-compute restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;section-12&quot;&gt;验证服务&lt;/h3&gt;
 
 &lt;p&gt;在控制节点执行以下命令&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 列出nova所有服务列表
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 列出nova所有服务列表
 root@controller:~# nova service-list
 +----+------------------+------------+----------+---------+-------+----------------------------+-----------------+
 | Id | Binary           | Host       | Zone     | Status  | State | Updated_at                 | Disabled Reason |
@@ -1496,6 +1866,7 @@ root@controller:~# nova image-list
 | 67cfd037-5704-4432-9b2c-cf5fffdb6319 | cirros | ACTIVE |        |
 +--------------------------------------+--------+--------+--------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;neutron&quot;&gt;安装网络服务neutron&lt;/h3&gt;
 
@@ -1503,7 +1874,7 @@ root@controller:~# nova image-list
 
 &lt;p&gt;1.创建neutron数据库并分配相应权限&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建数据库
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建数据库
 CREATE DATABASE neutron;
 # 分配访问权限
 GRANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;localhost&#39; \
@@ -1511,10 +1882,11 @@ GRANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;localhost&#39; \
 GRANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;%&#39; \
   IDENTIFIED BY &#39;root&#39;;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.在keystone中创建neutron服务以及endpoint&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 创建neutron用户
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 创建neutron用户
 root@controller:~# openstack user create --domain default --password-prompt neutron
 User Password:
 Repeat User Password:
@@ -1589,17 +1961,19 @@ root@controller:~# openstack endpoint create --region RegionOne \
 | url          | http://controller:9696           |
 +--------------+----------------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.安装neutron软件（根据Self-service网络方式）&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install neutron-server neutron-plugin-ml2 \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install neutron-server neutron-plugin-ml2 \
   neutron-plugin-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent \
     neutron-metadata-agent python-neutronclient conntrack
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;4.修改配置文件/etc/neutron/neutron.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[database]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[database]
 ...
 connection = mysql+pymysql://neutron:root@controller/neutron
 
@@ -1647,10 +2021,11 @@ project_name = service
 username = nova
 password = NOVA_PASS
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;5.修改配置文件/etc/neutron/plugins/ml2/ml2_conf.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[ml2]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ml2]
 ...
 type_drivers = flat,vlan,vxlan
 ...
@@ -1672,10 +2047,11 @@ vni_ranges = 1:1000
 ...
 enable_ipset = True
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;6.修改配置文件/etc/neutron/plugins/ml2/linuxbridge_agent.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[linux_bridge]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[linux_bridge]
 physical_interface_mappings = public:eth0
 
 [vxlan]
@@ -1692,19 +2068,21 @@ prevent_arp_spoofing = True
 enable_security_group = True
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;7.修改配置文件/etc/neutron/l3_agent.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
 ...
 verbose = True
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;8.修改配置文件/etc/neutron/dhcp_agent.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
@@ -1717,10 +2095,11 @@ dnsmasq_config_file = /etc/neutron/dnsmasq-neutron.conf
 # 创建文件/etc/neutron/dnsmasq-neutron.conf并写入如下内容
 dhcp-option-force=26,1450
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;9.修改配置文件/etc/neutron/metadata_agent.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 auth_uri = http://controller:5000
 auth_url = http://controller:35357
@@ -1738,10 +2117,11 @@ metadata_proxy_shared_secret = root
 ...
 verbose = True
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;10.修改配置文件/etc/nova/nova.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[neutron]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[neutron]
 ...
 url = http://controller:9696
 auth_url = http://controller:35357
@@ -1756,30 +2136,34 @@ password = root
 service_metadata_proxy = True
 metadata_proxy_shared_secret = root
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;11.同步数据库&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;su -s /bin/sh -c &quot;neutron-db-manage --config-file /etc/neutron/neutron.conf \
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;su -s /bin/sh -c &quot;neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head&quot; neutron
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;12.重启服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 重启nova
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 重启nova
 service nova-api restart
 # 重启neutron
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h4 id=&quot;section-14&quot;&gt;安装计算节点&lt;/h4&gt;
 
 &lt;p&gt;1.安装软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install neutron-plugin-linuxbridge-agent conntrack
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install neutron-plugin-linuxbridge-agent conntrack
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.修改配置文件/etc/neutron/neutron.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[DEFAULT]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[DEFAULT]
 ...
 rpc_backend = rabbit
 ...
@@ -1804,10 +2188,11 @@ project_name = service
 username = neutron
 password = root
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.修改配置文件/etc/neutron/plugins/ml2/linuxbridge_agent.ini&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[linux_bridge]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[linux_bridge]
 physical_interface_mappings = public:eth0
 
 [vxlan]
@@ -1824,10 +2209,11 @@ prevent_arp_spoofing = True
 enable_security_group = True
 firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;4.修改配置文件/etc/nova/nova.conf&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[neutron]
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[neutron]
 ...
 url = http://controller:9696
 auth_url = http://controller:35357
@@ -1839,18 +2225,20 @@ project_name = service
 username = neutron
 password = root
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;5.重启服务&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 重启nova-compute
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 重启nova-compute
 service nova-compute restart
 # 重启网络服务
 service neutron-plugin-linuxbridge-agent restart
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;6.验证&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# 验证是否成功加载插件
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 验证是否成功加载插件
 root@controller:~# neutron ext-list
 +-----------------------+-----------------------------------------------+
 | alias                 | name                                          |
@@ -1890,17 +2278,19 @@ root@controller:~# neutron agent-list
 | dbbb522e-a424-4606-8a69-77250154e5d3 | Linux bridge agent | compute    | :-)   | True           | neutron-linuxbridge-agent |
 +--------------------------------------+--------------------+------------+-------+----------------+---------------------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h3 id=&quot;horizon&quot;&gt;安装面板服务horizon&lt;/h3&gt;
 
 &lt;p&gt;1.安装horizon软件包&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;apt-get install openstack-dashboard
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install openstack-dashboard
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;2.修改配置文件&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;OPENSTACK_HOST = &quot;controller&quot;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;OPENSTACK_HOST = &quot;controller&quot;
 ALLOWED_HOSTS = [&#39;*&#39;, ]
 CACHES = {
     &#39;default&#39;: {
@@ -1926,11 +2316,13 @@ OPENSTACK_NEUTRON_NETWORK = {
 }
 TIME_ZONE = &quot;TIME_ZONE&quot;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;3.验证面板&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;登入面板测试面板可用性
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;登入面板测试面板可用性
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </description>
         <pubDate>Sun, 27 Mar 2016 17:00:13 +0800</pubDate>
         <link>http://www.pisces.ml/articles/openstack/20160328</link>
@@ -1938,79 +2330,6 @@ TIME_ZONE = &quot;TIME_ZONE&quot;
         
         
         <category>openstack</category>
-        
-      </item>
-    
-      <item>
-        <title>linux病毒扫描软件ClamAV安装于使用</title>
-        <description>&lt;p&gt;近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，&lt;br /&gt;
-根据该现象有可能是ddos攻击导致。于是上网查了一些杀毒软件，试图kill掉该病毒。网上查询到了一款ubuntu上的开源杀毒软件，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV。&lt;/p&gt;
-
-&lt;h2 id=&quot;clamav&quot;&gt;什么是clamAV&lt;/h2&gt;
-
-&lt;p&gt;clamAV全名Clam AntiVirus，是一款开源的杀毒软件，能够预防许多的恶意软件主要应用于邮件服务器。扫描并清理系统中的恶意软件。&lt;/p&gt;
-
-&lt;p&gt;clamAV包含了大量的实用程序如：命令行扫描，自动跟新数据库和可扩展多线程守护进程，以及反病毒引擎。&lt;/p&gt;
-
-&lt;p&gt;接下来我们就来介绍下clamAV的安装和使用。&lt;/p&gt;
-
-&lt;h2 id=&quot;section&quot;&gt;安装＆配置&lt;/h2&gt;
-
-&lt;p&gt;1.安装软件包&lt;/p&gt;
-
-&lt;p&gt;clamAV安装方法有很多可以直接去官网&lt;a href=&quot;http://www.clamav.net/download.html&quot;&gt;下载&lt;/a&gt;并进行安装，为了方便我们可以直接执行以下命令直接在ubuntu系统中安装该软件包：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 如果安装不了我们可以先更新下软件源`apt-get update`
-sudo apt-get install clamav clamav-daemon
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2.更新病毒数据库&lt;/p&gt;
-
-&lt;p&gt;安装完成后clamAV会提示你安装病毒数据库，clamAV会根据数据库中提供的数据对系统进行搜索查询，我们只需要执行以下命令来同步远程病毒数据库,该命令会下载main.cvd和daily.cvd文件。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo freshclam
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;clamav-1&quot;&gt;clamAV使用&lt;/h2&gt;
-
-&lt;p&gt;安装很简单，使用更简单，就一个&lt;code&gt;clamscan&lt;/code&gt;命令即可。示例：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 扫描/home目录下的文件
-clamscan -r /home
-
-# 全盘扫描(该命令可能执行时间比较长)
-clamscan -r /
-
-# 格式化输出，只输出显示病毒文件或者是恶意进程
-clamscan -r --bell -i /
-
-# 查询任意位置，并将结果写入新文件记录
-sudo clamscan -r /folder/to/scan/ | grep FOUND &amp;gt;&amp;gt; /path/to/save/report/myfile.txt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如上命令会扫描目录，如果发现恶意软件或者病毒文件会自动清理&lt;/p&gt;
-
-&lt;p&gt;我们还可以为clamAV建立定时任务执行如下命令：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;crontab -e
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;并在定时任务中写入如下任务&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;另外如果你不习惯使用命令行，还可以使用clamAV的GUI界面，需要执行以下命令安装GUI&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo apt-get install ClamTK
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-        <pubDate>Sun, 27 Mar 2016 17:00:13 +0800</pubDate>
-        <link>http://www.pisces.ml/articles/linux/2016328</link>
-        <guid isPermaLink="true">http://www.pisces.ml/articles/linux/2016328</guid>
-        
-        
-        <category>linux</category>
         
       </item>
     
@@ -2075,18 +2394,19 @@ sudo clamscan -r /folder/to/scan/ | grep FOUND &amp;gt;&amp;gt; /path/to/save/re
     
       <item>
         <title>Welcome to Jekyll and EasyBook</title>
-        <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+        <description>&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
 
 &lt;p&gt;GitHub Flavored Markdown is supported.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-ruby&quot;&gt;def print_hi(name)
-  puts &quot;Hi, #{name}&quot;
-end
-print_hi(&#39;Tom&#39;)
-#=&amp;gt; prints &#39;Hi, Tom&#39; to STDOUT.
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;Tom&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &#39;Hi, Tom&#39; to STDOUT.&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;h2 id=&quot;easybook-advanced-functions&quot;&gt;EasyBook Advanced Functions&lt;/h2&gt;
 
@@ -2101,16 +2421,16 @@ print_hi(&#39;Tom&#39;)
 &lt;/ul&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Tips:&lt;/strong&gt; You can disable Disqus or 多说 on posts/pages by adding &lt;code&gt;nocomments: true&lt;/code&gt; into &lt;a href=&quot;http://jekyllrb.com/docs/frontmatter/&quot;&gt;YAML Front Matter&lt;/a&gt;.&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Tips:&lt;/strong&gt; You can disable Disqus or 多说 on posts/pages by adding &lt;code class=&quot;highlighter-rouge&quot;&gt;nocomments: true&lt;/code&gt; into &lt;a href=&quot;http://jekyllrb.com/docs/frontmatter/&quot;&gt;YAML Front Matter&lt;/a&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;EasyBook uses upaiyun CDN to make everyone lncluding Chinese visitors feel speedy. You can find it in &lt;code&gt;_includes/footer.html&lt;/code&gt; and change it to your favorite CDN like Google CDN.&lt;/p&gt;
+&lt;p&gt;EasyBook uses upaiyun CDN to make everyone lncluding Chinese visitors feel speedy. You can find it in &lt;code class=&quot;highlighter-rouge&quot;&gt;_includes/footer.html&lt;/code&gt; and change it to your favorite CDN like Google CDN.&lt;/p&gt;
 
 &lt;h2 id=&quot;support-me-by&quot;&gt;Support me by…&lt;/h2&gt;
 
 &lt;h3 id=&quot;add-a-link&quot;&gt;Add a link&lt;/h3&gt;
 
-&lt;p&gt;EasyBook does not make the footer heavy; the link to theme could be on &lt;code&gt;about.md&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;EasyBook does not make the footer heavy; the link to theme could be on &lt;code class=&quot;highlighter-rouge&quot;&gt;about.md&lt;/code&gt;:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;This website is using &lt;a href=&quot;http://laobubu.net&quot;&gt;laobubu&lt;/a&gt;’s theme: &lt;a href=&quot;https://github.com/laobubu/jekyll-theme-EasyBook&quot;&gt;EasyBook&lt;/a&gt;&lt;/p&gt;
@@ -2118,7 +2438,7 @@ print_hi(&#39;Tom&#39;)
 
 &lt;h3 id=&quot;donate-paypal-or-&quot;&gt;Donate (PayPal or 支付宝)&lt;/h3&gt;
 
-&lt;p&gt;That’s the best &lt;img class=&quot;emoji&quot; title=&quot;:smile:&quot; alt=&quot;:smile:&quot; src=&quot;https://assets.github.com/images/icons/emoji/unicode/1f604.png&quot; height=&quot;20&quot; width=&quot;20&quot; align=&quot;absmiddle&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;That’s the best :smile:&lt;/p&gt;
 
 &lt;p&gt;Please visit &lt;a href=&quot;http://laobubu.net/donate.html&quot;&gt;http://laobubu.net/donate.html&lt;/a&gt;&lt;/p&gt;
 
@@ -2159,7 +2479,7 @@ print_hi(&#39;Tom&#39;)
 &lt;p&gt;Consectetur ultrices. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;Vivamus placerat, tortor et aliquam porttitor, risus mi dapibus neque, vitae vulputate urna.&lt;br /&gt;
+  &lt;p&gt;Vivamus placerat, tortor et aliquam porttitor, risus mi dapibus neque, vitae vulputate urna.
 – Lorem&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -2191,12 +2511,13 @@ print_hi(&#39;Tom&#39;)
 
 &lt;p&gt;taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam erat volutpat. Sed at semper sem. Morbi in finibus tellus. Pellentesque nec dapibus risus.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-cpp&quot;&gt;  #include &amp;lt;iostream&amp;gt;
- 
-  int main () {
-    std::cout &amp;lt;&amp;lt; &quot;Hello world!&quot; &amp;lt;&amp;lt; std::endl;
-  }
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+&lt;/span&gt; 
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello world!&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;vitae erat non congue. Proin sagittis vitae justo at cursus. Phasellus egestas bibendum urna vel condimentum.&lt;/p&gt;
 

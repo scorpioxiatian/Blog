@@ -110,7 +110,7 @@
 
 <p>目录结构</p>
 
-<pre><code>├── assignment
+<div class="highlighter-rouge"><pre class="highlight"><code>├── assignment
 │   ├── backends
 │   ├── controllers.py
 │   ├── controllers.pyc
@@ -159,20 +159,21 @@
 │   └── manage.pyc
 ......
 </code></pre>
+</div>
 
 <ol>
   <li>cmd目录下(主要存放命令行工具)：
     <ul>
       <li>keystone-all（本地启动服务监听35357和5000端口）</li>
-      <li>keystone-manage（keystone综合管理工具<br />
-  a. db_sync:初始化数据库<br />
-  b. db_version：打印数据库迁移版本<br />
-  c. fernet_rotate：Rotate Fernet encryption keys。<br />
-  d. fernet_setup：Setup a key repository for Fernet tokens<br />
-  e. mapping_purge:清空mapping表<br />
-  f. pki_setup：初始化生成密钥对和证书文件<br />
-  g. saml_idp_metadata：生成Identity Provider的metadata<br />
-  h. ssl_setup ：为https链接生成密钥对和证书<br />
+      <li>keystone-manage（keystone综合管理工具
+  a. db_sync:初始化数据库
+  b. db_version：打印数据库迁移版本
+  c. fernet_rotate：Rotate Fernet encryption keys。
+  d. fernet_setup：Setup a key repository for Fernet tokens
+  e. mapping_purge:清空mapping表
+  f. pki_setup：初始化生成密钥对和证书文件
+  g. saml_idp_metadata：生成Identity Provider的metadata
+  h. ssl_setup ：为https链接生成密钥对和证书
   i. token_flush ：清除过期token</li>
     </ul>
   </li>
@@ -219,17 +220,17 @@
 
 <p><img src="http://www.pisces.ml/images/RESTFul_API.jpg" alt="" /></p>
 
-<p>keystone是基于python WSGI框架实现的web应用，通过paste组织web应用服务网络，对外提供REST Api，主要提供了提供 Identity、Token、Catalog 、Resource、Assignment和 Policy 服务：<br />
-* Identity服务验证了身份验证凭证，并提供了所有相关的元数据。<br />
-* Token服务验证并管理用于验证请求身份的令牌。<br />
-* Catalog服务提供了可用于端点发现的服务注册表。<br />
-* Policy服务暴露了一个基于规则的身份验证引擎。<br />
-* Resource服务提供资源包括project/domain<br />
+<p>keystone是基于python WSGI框架实现的web应用，通过paste组织web应用服务网络，对外提供REST Api，主要提供了提供 Identity、Token、Catalog 、Resource、Assignment和 Policy 服务：
+* Identity服务验证了身份验证凭证，并提供了所有相关的元数据。
+* Token服务验证并管理用于验证请求身份的令牌。
+* Catalog服务提供了可用于端点发现的服务注册表。
+* Policy服务暴露了一个基于规则的身份验证引擎。
+* Resource服务提供资源包括project/domain
 * Assignment服务分配角色</p>
 
 <p>每个 Keystone 功能都支持用于集成到异构环境并展示不同功能的后端插件。通过下表我们看下各个服务所管理的对象：</p>
 
-<pre><code>| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
+<div class="highlighter-rouge"><pre class="highlight"><code>| 组件名称 | 管理对象 | 类型/格式 | 服务后台 | 配置后台 |
 |:-----:|:-----:|:-----:|:-----:|:-----:|
 | identity | keystone.identity.controllers.Groupl3 keystone.identity.controllers.UserV3 | -- | ldap/sql | [identity] driver = sql|
 | Token | keystone.token.controllers.Auth | uuid/pki/pkiz/fernet | kvs/sql/memcache/memcache_pool | [token] provider = uuid/pki/pkiz/fernet driver = sql/memcache/memcache_pool |
@@ -239,18 +240,19 @@
 | Assignment | keystone.assignment.controllers.GrantAssignmentV3 keystone.assignment.controllers.ProjectAssignmentV3 keystone.assignment.controllers.TenantAssignment keystone.assignment.controllers.Role keystone.assignment.controllers.RoleAssignmentV2 keystone.assignment.controllers.RoleAssignmentV3 keystone.assignment.controllers.RoleV3 | -- | sql/ldap | [assignment] driver=sql/ldap |
 | Authentication | keystone.auth.controllers.Auth | password/saml2/token/oauth1 | -- | [auth] methods=external,password,token,oauth1 password=keystone.auth.plugins.password.Password token=keystone.auth.plugins.token.Token |
 </code></pre>
+</div>
 
 <h2 id="section-6">安装配置</h2>
 
 <h3 id="section-7">软件安装</h3>
 
-<p>可以通过两种方式安装keystone:<br />
-* 源码安装<br />
+<p>可以通过两种方式安装keystone:
+* 源码安装
 * 软件包安装</p>
 
 <p><em>源码安装（本地环境）</em>:</p>
 
-<pre><code>$ git clone https://git.openstack.org/openstack/keystone.git　#拷贝源码
+<div class="highlighter-rouge"><pre class="highlight"><code>$ git clone https://git.openstack.org/openstack/keystone.git　#拷贝源码
 $ cd keystone/ &amp;&amp; virtualenv .venv #进入软件包，创建本地隔离环境
 $ source .venv/bin/activate
 $ pip install -r requirements.txt　＃安装软件依赖包
@@ -258,10 +260,11 @@ $ python setup.py install/develop　＃可以根据需要选择已哪种方式�
 $ vim /etc/keystone/keystone.conf　＃根据具体需求配置keystone，可参考官方配置文档：http://docs.openstack.org/developer/keystone/configuration.html
 # 初始化数据库: keystone-manage --config-file etc/keystone.conf db_sync
 </code></pre>
+</div>
 
 <p><em>软件包安装</em>:</p>
 
-<pre><code>＃Ubuntu
+<div class="highlighter-rouge"><pre class="highlight"><code>＃Ubuntu
 $ sudo apt-get install keystone
 # Fedora
 $ sudo yum install openstack-keystone
@@ -269,6 +272,7 @@ $ sudo yum install openstack-keystone
 # 配置keystone配置文件keystone.conf
 # 初始化数据库: keystone-manage --config-file etc/keystone.conf db_sync
 </code></pre>
+</div>
 
 <h3 id="section-8">配置说明</h3>
 
@@ -284,7 +288,7 @@ $ sudo yum install openstack-keystone
 
 <p>keystone.conf 中主要配置选项说明:</p>
 
-<pre><code>[DEFAULT]
+<div class="highlighter-rouge"><pre class="highlight"><code>[DEFAULT]
    admin_token = ADMIN   # 定义一个超级管理员的token, 使用此token可以绕过权限检查直接操作所有接口, 此参数应该只在安装完keystone后创建初始账户时使用, 生产环境中应该被禁用, 禁用方法为: 在keystone-paste.ini中将所有pipeline中的admin_token_auth这个filter删掉.
 debug = False # 打印debug级别的日志
 verbose = False  # 打印info级别的日志 ,
@@ -323,25 +327,26 @@ connection = mysql://root:root@localhost/keystone  # 定义数据库连接, 如�
 enabled = True  # 日否开启os_inherit 扩展, 官方对此扩展的说明文档: https://github.com/openstack/identity-api/blob/master/v3/src/markdown/identity-api-v3-os-inherit-ext.md
 所有参数的默认值定义都在keystone/common/config.py中
 </code></pre>
+</div>
 
 <h2 id="fqa">FQA</h2>
 
-<p>Ｑ：keystone的35357和5000端口有什么区别?<br />
-Ａ：在keystone的 v3 api中35357 和5000 没有任何区别, 建议统一只使用35357端口, 在v2.0的api中, 5000是public api的端口,35357是admin api的端口, 两者提供api的具体差别可以看keystone-paste.ini中的[pipeline:public_api] 和[pipeline:admin_api].<br />
-Ｑ：如何开启一个默认未启用的扩展?<br />
-Ａ：keystone的扩展,都以filter的形式在keystone-paste.ini中定义, 需要开启只需要将其加入相应的pipeline中,注意的是有些扩展还依赖一些数据库表, 这些表默认安装是不会生成的, 需要用keystone-manage 命令额外初始化.<br />
-比如要启用oauth1扩展, 此扩展有自己的数据库表:<br />
+<p>Ｑ：keystone的35357和5000端口有什么区别?
+Ａ：在keystone的 v3 api中35357 和5000 没有任何区别, 建议统一只使用35357端口, 在v2.0的api中, 5000是public api的端口,35357是admin api的端口, 两者提供api的具体差别可以看keystone-paste.ini中的[pipeline:public_api] 和[pipeline:admin_api].
+Ｑ：如何开启一个默认未启用的扩展?
+Ａ：keystone的扩展,都以filter的形式在keystone-paste.ini中定义, 需要开启只需要将其加入相应的pipeline中,注意的是有些扩展还依赖一些数据库表, 这些表默认安装是不会生成的, 需要用keystone-manage 命令额外初始化.
+比如要启用oauth1扩展, 此扩展有自己的数据库表:
 oauth1在keystone-paste.ini中的定义为[filter:oauth1_extension], 将其加入[pipeline:api_v3], 顺序最好放在service_v3之前. PS: 有些扩展只支持v2.0 api,有些只支持v3 api,实际情况可以查看它们的实现,比如oauth1: keystone.contrib.oauth1.controllers, 其中所有的controller都是继承自V3Controller, 则此api只能在v3下使用. keystone-manage –config-file etc/keystone.conf db_sync –extension oauth1 接下来即可使用oauth1扩展定义的api了.</p>
 
 <h2 id="section-9">参考文档</h2>
 
-<p>http://docs.openstack.org/developer/keystone/<br />
-http://docs.openstack.org/developer/keystone/architecture.html#application-construction<br />
-http://docs.openstack.org/developer/keystone/installing.html<br />
-http://docs.openstack.org/developer/keystone/developing.html<br />
-http://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-keystone/index.html<br />
-https://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-pythonapis/<br />
-http://www.cnblogs.com/sammyliu/p/4272611.html<br />
+<p>http://docs.openstack.org/developer/keystone/
+http://docs.openstack.org/developer/keystone/architecture.html#application-construction
+http://docs.openstack.org/developer/keystone/installing.html
+http://docs.openstack.org/developer/keystone/developing.html
+http://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-keystone/index.html
+https://www.ibm.com/developerworks/cn/cloud/library/cl-openstack-pythonapis/
+http://www.cnblogs.com/sammyliu/p/4272611.html
 http://blog.csdn.net/hzrandd/article/details/10834381</p>
 
 
@@ -387,15 +392,15 @@ http://blog.csdn.net/hzrandd/article/details/10834381</p>
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
       <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
     
       <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
     
-      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
-    
       <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
     
-      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
     
   </ul>
 </div>

@@ -55,7 +55,7 @@
   </header>
 
   <article class="post-content">
-    <p>近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，<br />
+    <p>近期安装的几台虚拟机网络出去流量高的惊人，达到400~600M/s，直接导致网络几乎瘫痪。直接导致远程连接不上主机，网络延迟特别高。查询原因发现后台有一个进程消耗一半cpu，并且该进程杀死后又会自动启动另外一个进程，无法杀掉。当断掉公网ip后就能kill掉该进程，且不会再自动启动。且该局域网中所有主机均出现该状况，
 根据该现象有可能是ddos攻击导致。于是上网查了一些杀毒软件，试图kill掉该病毒。网上查询到了一款ubuntu上的开源杀毒软件，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV，尝试了以下果然有效果。下面我们来介绍下这款软件clamAV。</p>
 
 <h2 id="clamav">什么是clamAV</h2>
@@ -72,22 +72,24 @@
 
 <p>clamAV安装方法有很多可以直接去官网<a href="http://www.clamav.net/download.html">下载</a>并进行安装，为了方便我们可以直接执行以下命令直接在ubuntu系统中安装该软件包：</p>
 
-<pre><code># 如果安装不了我们可以先更新下软件源`apt-get update`
+<div class="highlighter-rouge"><pre class="highlight"><code># 如果安装不了我们可以先更新下软件源`apt-get update`
 sudo apt-get install clamav clamav-daemon
 </code></pre>
+</div>
 
 <p>2.更新病毒数据库</p>
 
 <p>安装完成后clamAV会提示你安装病毒数据库，clamAV会根据数据库中提供的数据对系统进行搜索查询，我们只需要执行以下命令来同步远程病毒数据库,该命令会下载main.cvd和daily.cvd文件。</p>
 
-<pre><code>sudo freshclam
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo freshclam
 </code></pre>
+</div>
 
 <h2 id="clamav-1">clamAV使用</h2>
 
-<p>安装很简单，使用更简单，就一个<code>clamscan</code>命令即可。示例：</p>
+<p>安装很简单，使用更简单，就一个<code class="highlighter-rouge">clamscan</code>命令即可。示例：</p>
 
-<pre><code># 扫描/home目录下的文件
+<div class="highlighter-rouge"><pre class="highlight"><code># 扫描/home目录下的文件
 clamscan -r /home
 
 # 全盘扫描(该命令可能执行时间比较长)
@@ -99,23 +101,27 @@ clamscan -r --bell -i /
 # 查询任意位置，并将结果写入新文件记录
 sudo clamscan -r /folder/to/scan/ | grep FOUND &gt;&gt; /path/to/save/report/myfile.txt
 </code></pre>
+</div>
 
 <p>如上命令会扫描目录，如果发现恶意软件或者病毒文件会自动清理</p>
 
 <p>我们还可以为clamAV建立定时任务执行如下命令：</p>
 
-<pre><code>crontab -e
+<div class="highlighter-rouge"><pre class="highlight"><code>crontab -e
 </code></pre>
+</div>
 
 <p>并在定时任务中写入如下任务</p>
 
-<pre><code>00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
+<div class="highlighter-rouge"><pre class="highlight"><code>00 00 * * * clamscan -r /location_of_files_or_folder # 根据实际指定搜索文件夹
 </code></pre>
+</div>
 
 <p>另外如果你不习惯使用命令行，还可以使用clamAV的GUI界面，需要执行以下命令安装GUI</p>
 
-<pre><code>sudo apt-get install ClamTK
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install ClamTK
 </code></pre>
+</div>
 
   </article>
   
@@ -159,15 +165,15 @@ sudo clamscan -r /folder/to/scan/ | grep FOUND &gt;&gt; /path/to/save/report/myf
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
       <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
     
       <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
     
-      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
-    
       <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
     
-      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
     
   </ul>
 </div>

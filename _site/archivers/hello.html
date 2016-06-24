@@ -2,6 +2,7 @@
 <html>
 
   <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +12,7 @@
 
   <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="http://www.pisces.ml/archivers/hello">
-  <link rel="alternate" type="application/rss+xml" title="Scorpio 博客" href="http://www.pisces.ml/feed.xml" />
+  <link rel="alternate" type="application/rss+xml" title="Scorpio 博客" href="http://www.pisces.ml/feed.xml">
 </head>
 
 
@@ -55,42 +56,48 @@
   </header>
 
   <article class="post-content">
-    <p>You’ll find this post in your <code>_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code>jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+    <p>You’ll find this post in your <code class="highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
 
-<p>To add new posts, simply add a file in the <code>_posts</code> directory that follows the convention <code>YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+<p>To add new posts, simply add a file in the <code class="highlighter-rouge">_posts</code> directory that follows the convention <code class="highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
 
 <p>GitHub Flavored Markdown is supported.</p>
 
-<pre><code class="language-ruby">def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=&gt; prints 'Hi, Tom' to STDOUT.
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
+<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span>
 </code></pre>
+</div>
 
 <h2 id="easybook-advanced-functions">EasyBook Advanced Functions</h2>
 
 <p>You are using <a href="https://github.com/laobubu/jekyll-theme-EasyBook">EasyBook</a> the template from <a href="http://laobubu.net">laobubu.net</a>. Therefore some features are supported now:</p>
 
 <ul>
-  <li><strong>Pagination</strong> is enabled.</li>
-  <li><strong>Disqus</strong> or <strong>多说</strong> is ready.</li>
-  <li><strong>TOC</strong> for posts is enabled.</li>
-  <li><strong>Profile</strong> including your links and avatar on the sidebar.</li>
+  <li>
+<strong>Pagination</strong> is enabled.</li>
+  <li>
+<strong>Disqus</strong> or <strong>多说</strong> is ready.</li>
+  <li>
+<strong>TOC</strong> for posts is enabled.</li>
+  <li>
+<strong>Profile</strong> including your links and avatar on the sidebar.</li>
   <li><em>And more…</em></li>
 </ul>
 
 <blockquote>
-  <p><strong>Tips:</strong> You can disable Disqus or 多说 on posts/pages by adding <code>nocomments: true</code> into <a href="http://jekyllrb.com/docs/frontmatter/">YAML Front Matter</a>.</p>
+  <p><strong>Tips:</strong> You can disable Disqus or 多说 on posts/pages by adding <code class="highlighter-rouge">nocomments: true</code> into <a href="http://jekyllrb.com/docs/frontmatter/">YAML Front Matter</a>.</p>
 </blockquote>
 
-<p>EasyBook uses upaiyun CDN to make everyone lncluding Chinese visitors feel speedy. You can find it in <code>_includes/footer.html</code> and change it to your favorite CDN like Google CDN.</p>
+<p>EasyBook uses upaiyun CDN to make everyone lncluding Chinese visitors feel speedy. You can find it in <code class="highlighter-rouge">_includes/footer.html</code> and change it to your favorite CDN like Google CDN.</p>
 
 <h2 id="support-me-by">Support me by…</h2>
 
 <h3 id="add-a-link">Add a link</h3>
 
-<p>EasyBook does not make the footer heavy; the link to theme could be on <code>about.md</code>:</p>
+<p>EasyBook does not make the footer heavy; the link to theme could be on <code class="highlighter-rouge">about.md</code>:</p>
 
 <blockquote>
   <p>This website is using <a href="http://laobubu.net">laobubu</a>’s theme: <a href="https://github.com/laobubu/jekyll-theme-EasyBook">EasyBook</a></p>
@@ -98,7 +105,7 @@ print_hi('Tom')
 
 <h3 id="donate-paypal-or-">Donate (PayPal or 支付宝)</h3>
 
-<p>That’s the best <img class="emoji" title=":smile:" alt=":smile:" src="https://assets.github.com/images/icons/emoji/unicode/1f604.png" height="20" width="20" align="absmiddle" /></p>
+<p>That’s the best <img class="emoji" title=":smile:" alt=":smile:" src="https://assets.github.com/images/icons/emoji/unicode/1f604.png" height="20" width="20" align="absmiddle"></p>
 
 <p>Please visit <a href="http://laobubu.net/donate.html">http://laobubu.net/donate.html</a></p>
 
@@ -153,15 +160,15 @@ print_hi('Tom')
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
       <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
     
       <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
     
-      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
-    
       <li><a class="post-link" href="/articles/linux/2016328">linux病毒扫描软件ClamAV安装于使用</a></li>
     
-      <li><a class="post-link" href="/articles/2016322">DNS域名含义解析</a></li>
+      <li><a class="post-link" href="/articles/openstack/20160328">openstack 多节点安装</a></li>
     
   </ul>
 </div>
@@ -175,7 +182,7 @@ print_hi('Tom')
 
     <footer class="footer">
 <div class="wrapper">
-&copy; 2016 ChengKunYe
+© 2016 ChengKunYe
 </div>
 </footer>
 
