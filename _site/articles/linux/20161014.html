@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Vim快捷键整理 « Scorpio 博客</title>
+  <meta name="description" content="  Vim是Mac OS和Linux里内置的一款强大的文本编辑器，能够和Shell无缝交互。同时也是SSH远程登录VPS时编辑文件的唯一选择。因此掌握Vim对于做服务器运维和Web后端开发的重要性不言而喻。本文对Vim的快捷键操作进行了简单整理。">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.pisces.ml/articles/linux/20161014">
+  <link rel="alternate" type="application/rss+xml" title="Scorpio 博客" href="http://www.pisces.ml/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Scorpio 博客</a>
+    <nav class="site-nav">
+      
+        
+      
+        
+        <a class="page-link" href="/about/">关于我</a>
+        
+      
+        
+        <a class="page-link" href="/category/">目录</a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Vim快捷键整理</h1>
+    <p class="post-meta">Oct 14, 2016</p>
+  </header>
+
+  <article class="post-content">
+    <blockquote>
+  <p>Vim是Mac OS和Linux里内置的一款强大的文本编辑器，能够和Shell无缝交互。同时也是SSH远程登录VPS时编辑文件的唯一选择。因此掌握Vim对于做服务器运维和Web后端开发的重要性不言而喻。
+本文对Vim的快捷键操作进行了简单整理。</p>
+</blockquote>
+
+<p>Vim常见有两种模式一种是Insert模式，该模式下可以像其它文本编辑器一样正常输入字符；另一种是Normal模式，该模式下Vim监听用户的按键可以对文本进行快速修改。</p>
+
+<p>想要从Insert模式切换到Normal模式只需按下ESC键即可。</p>
+
+<p>想要从Normal模式切换到Insert模式，有很多方法。
+最直接的是按下I键，效果是：在当前光标处插入文本。
+如果按下A键，效果是：在下一光标处追加文本。</p>
+
+<p>以下均是在Normal模式下的部分 快捷键说明：</p>
+
+<h2 id="section">光标的快速移动</h2>
+
+<ul>
+  <li>h,j,k,l：左，下，上，右</li>
+  <li>w：光标移动至下一单词首位</li>
+  <li>b：光标移动至当前单词首位，如果光标已经在当前单词首位，就移动到前一单词首位</li>
+  <li>e：光标移动至当前单词末位</li>
+  <li>gg：光标移动至文本首行</li>
+  <li>Shift+g：光标移动至文本尾行</li>
+  <li>27+Shift+g：光标移动至文本第27行</li>
+</ul>
+
+<h2 id="section-1">光标跳转</h2>
+
+<ul>
+  <li>%: 可以匹配{},””,(),[]之间跳转。</li>
+  <li>H、M、L：直接跳转到当前屏幕的顶部、中部、底部。</li>
+  <li>#H：跳转到当前屏的第#行。</li>
+  <li>#L：跳转到当前屏的倒数第#行。</li>
+  <li>zt: 当前编辑行置为屏顶。</li>
+  <li>zz: 当前编辑行置为屏中。</li>
+  <li>zb: 当前编辑行置为屏底。</li>
+  <li>G：直接跳转到文件的底部。</li>
+  <li>gg: 跳转到文件首。</li>
+  <li>():跳转到当前的行首、行尾。</li>
+  <li>{}：向上、向下跳转到最近的空行。</li>
+  <li>[{：跳转到目前区块开头。</li>
+  <li>]}：跳转到目前区块结尾。</li>
+  <li>0: 跳转到行首。</li>
+  <li>$: 跳转到行尾。</li>
+  <li>2$: 跳转到下一行的行尾。</li>
+  <li>#G: 15G,跳转到15行。</li>
+  <li>:#：跳转到#行。</li>
+  <li>f’n’：跳转到下一个”n”字母后。</li>
+  <li>ctrl+b: 向后翻一页。</li>
+  <li>ctrl+f：向前翻一页。</li>
+  <li>ctrl+u: 向后翻半页。</li>
+  <li>ctrl+d: 向前翻半页。</li>
+  <li>ctry+e: 下滚一行。</li>
+</ul>
+
+<h1 id="section-2">选择</h1>
+
+<ul>
+  <li>V: 选择一行。</li>
+  <li>^v: 矩形选择。</li>
+  <li>v3w: 选择三个字符</li>
+</ul>
+
+<h2 id="section-3">插入行</h2>
+
+<ul>
+  <li>i: 光标前插入。</li>
+  <li>I: 在当前行首插入。</li>
+  <li>a: 光标后插入。</li>
+  <li>A: 当前行尾插入。</li>
+  <li>O: 在当前行之前插入新行。</li>
+  <li>o: 在当前行之后插入新行。</li>
+</ul>
+
+<h2 id="section-4">修改</h2>
+
+<ul>
+  <li>r: 替换光标所在处的字符。</li>
+  <li>R：替换光标所到之处的字符。</li>
+  <li>cw: 更改光标所在处的字到字尾处。</li>
+  <li>c#w: c3w 修改3个字符。</li>
+  <li>C：修改到行尾。</li>
+  <li>ci’：修改配对标点符号中的文本内容。</li>
+  <li>di’：删除配对标点符号中的文本内容。</li>
+  <li>yi’：复制配对标点符号中的文本内容。</li>
+  <li>vi’：选中配对标点符号中的文本内容。</li>
+  <li>s：替换当前一个光标所处字符。</li>
+  <li>#S：删除 # 行，并以新文本代替。</li>
+</ul>
+
+<h2 id="section-5">删除与还原</h2>
+
+<ul>
+  <li>u：还原上一个操作（不限于删除）</li>
+  <li>D：删除到行尾。</li>
+  <li>X: 每按一次，删除光标所在位置的前面一个字符。</li>
+  <li>x: 每按一次，删除光标所在位置的后面一个字符。</li>
+  <li>#x: 删除光标所在位置后面6个字符。</li>
+  <li>d^: 删至行首。</li>
+  <li>d$: 删至行尾。</li>
+  <li>dd:(剪切)删除光标所在行。</li>
+  <li>de：删除光标后的单词内容，同时被删除内容存于剪贴板上</li>
+  <li>dw: 删除一个单词/光标之后的单词剩余部分。</li>
+  <li>d4w: 删除4个word。</li>
+  <li>#dd: 从光标所在行开始删除#行。</li>
+  <li>daB: 删除{}及其内的内容。</li>
+  <li>diB: 删除{}中的内容。</li>
+  <li>n1,n2 d：将n1,n2行之间的内容删除。</li>
+</ul>
+
+<h2 id="section-6">剪切、复制与粘贴</h2>
+
+<ul>
+  <li>选定文本块：使用v进入可视模式；移动光标键选定内容</li>
+  <li>y：复制选定块</li>
+  <li>yy：复制光标所在整行</li>
+  <li>d：剪切选定块</li>
+  <li>dd：剪切光标所在整行</li>
+  <li>p：粘贴文本</li>
+</ul>
+
+<h1 id="section-7">大小写转换</h1>
+
+<ul>
+  <li>gUU: 将当前行的字母改为大写。</li>
+  <li>guu: 将当前行的字母改为小写。</li>
+  <li>gUw: 将当前光标下的单词改为大写。</li>
+  <li>guw: 将当前光标下的单词改为小写。</li>
+  <li>ggguG: 整篇大写</li>
+  <li>gg: 光标到文件第一个字符。</li>
+  <li>gu: 把选择范围全部小写。</li>
+  <li>G: 到文件结束。</li>
+  <li>gggUG: 整篇小写：</li>
+</ul>
+
+<h2 id="section-8">查找与替换</h2>
+
+<ul>
+  <li>f+o：在当前行的光标之后查找字母o</li>
+  <li>F+b：在当前行的光标之前查找字母b</li>
+  <li>:/word：全文查找word。 按下:实际上是进入了Vim的命令模式。查找操作支持正则表达式。</li>
+  <li>r+p：将光标之后的字符替换为字母p</li>
+  <li>:s/word/replace：光标所在行的第一个word替换为replace。</li>
+  <li>:%s/from/to/：全文查找from并替换为to。</li>
+  <li>:1,50s/from/to/：在第1行和第50行之间（含）进行搜索和替换。:45s/from/to/表示仅仅在第45行进行搜索和替换。而1,$行号范围和%是等价的。</li>
+  <li>:%s/from/to/g：全文查找from并替换为to,包含选项g的替换范围更广。</li>
+  <li>:%s/from/to/gc：全文查找from并替换为to，替换时询问。可以选择y/n/a/q/l/^E/^Y：y表示同意当前替换；n表示不同意当前替换；a表示替换当前和后面的并且不再确认；q表示立即结束替换操作；l表示把当前的替换后结束替换操作；^E向上滚屏^Y向下滚屏，用来帮助查看前后内容以决定进行操作。</li>
+</ul>
+
+<h2 id="shell">执行Shell命令</h2>
+
+<ul>
+  <li>:!ls就等同于在Shell终端执行ls命令。</li>
+</ul>
+
+<p>—————————————————–分割线————————————————</p>
+
+<blockquote>
+  <p>原文参考链接：http://www.jianshu.com/p/c23136f68d2f</p>
+</blockquote>
+
+  </article>
+  
+  
+
+<div class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = 'disqusscorpio'; // required: replace example with your forum shortname
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+</div>
+
+
+
+
+</div>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/avatar.jpg" alt="ChengKunYe">
+  <div class="col-box-title name">ChengKunYe</div>
+  <p>“任何傻瓜都能写出计算机可以理解的代码。好的程序员能写出人能读懂的代码” ——Martin Fowler</p>
+  <p class="contact">
+    
+    <a href="https://github.com/scorpioxiatian">GitHub</a>
+    
+    
+    
+    <a href="mailto:smith7alan@qq.com">Email</a>
+    
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/articles/linux/20161014">Vim快捷键整理</a></li>
+    
+      <li><a class="post-link" href="/articles/jekyll/2016722">jekyll 常用变量</a></li>
+    
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
+      <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
+    
+      <li><a class="post-link" href="/articles/openstack/20160425">keystone架构和功能分析</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Friendly Link</div>
+  <ul class="post-list">
+    <li><a class="post-link" href="http://mytrix.me/">MatheMatrix[PG]'s blog'</a></li>
+    <li><a class="post-link" href="http://blog.coderzh.com/">CoderZH Blog</a></li>
+    <li><a class="post-link" href="http://way4ever.com/">Way Forever</a></li>
+    <li><a class="post-link" href="http://www.wklken.me/">wklken</a></li>
+    <li><a class="post-link" href="http://bingotree.cn/">BINGOTREE</a></li>
+    <li><a class="post-link" href="http://adam.younglogic.com/">Adam Young’s Bloe</a></li>
+    <li><a class="post-link" href="http://seanlook.com/">Sean's Notes</a></li>
+    <li><a class="post-link" href="http://wsfdl.com/">koala bear</a></li>
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2016 ChengKunYe
+</div>
+</footer>
+
+<script src="/js/easybook.js"></script>
+
+  </body>
+
+</html>
