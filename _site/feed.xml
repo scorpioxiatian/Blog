@@ -6,8 +6,8 @@
 </description>
     <link>http://www.pisces.ml/</link>
     <atom:link href="http://www.pisces.ml/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 25 Oct 2016 14:46:36 +0800</pubDate>
-    <lastBuildDate>Tue, 25 Oct 2016 14:46:36 +0800</lastBuildDate>
+    <pubDate>Thu, 27 Oct 2016 12:18:18 +0800</pubDate>
+    <lastBuildDate>Thu, 27 Oct 2016 12:18:18 +0800</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
@@ -68,7 +68,7 @@
   &lt;li&gt;ctry+e: 下滚一行。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&quot;section-2&quot;&gt;选择&lt;/h1&gt;
+&lt;h2 id=&quot;section-2&quot;&gt;选择&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;V: 选择一行。&lt;/li&gt;
@@ -134,7 +134,7 @@
   &lt;li&gt;p：粘贴文本&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&quot;section-7&quot;&gt;大小写转换&lt;/h1&gt;
+&lt;h2 id=&quot;section-7&quot;&gt;大小写转换&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;gUU: 将当前行的字母改为大写。&lt;/li&gt;
@@ -157,7 +157,8 @@
   &lt;li&gt;r+p：将光标之后的字符替换为字母p&lt;/li&gt;
   &lt;li&gt;:s/word/replace：光标所在行的第一个word替换为replace。&lt;/li&gt;
   &lt;li&gt;:%s/from/to/：全文查找from并替换为to。&lt;/li&gt;
-  &lt;li&gt;:1,50s/from/to/：在第1行和第50行之间（含）进行搜索和替换。:45s/from/to/表示仅仅在第45行进行搜索和替换。而1,$行号范围和%是等价的。&lt;/li&gt;
+  &lt;li&gt;:1,50s/from/to/：在第1行和第50行之间（含）进行搜索和替换。&lt;/li&gt;
+  &lt;li&gt;:45s/from/to/表示仅仅在第45行进行搜索和替换。而1,$行号范围和%是等价的。&lt;/li&gt;
   &lt;li&gt;:%s/from/to/g：全文查找from并替换为to,包含选项g的替换范围更广。&lt;/li&gt;
   &lt;li&gt;:%s/from/to/gc：全文查找from并替换为to，替换时询问。可以选择y/n/a/q/l/^E/^Y：y表示同意当前替换；n表示不同意当前替换；a表示替换当前和后面的并且不再确认；q表示立即结束替换操作；l表示把当前的替换后结束替换操作；^E向上滚屏^Y向下滚屏，用来帮助查看前后内容以决定进行操作。&lt;/li&gt;
 &lt;/ul&gt;
