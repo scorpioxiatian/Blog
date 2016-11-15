@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>mysql数据库备份与恢复 « Scorpio 博客</title>
+  <meta name="description" content="工作当中有时需要对数据库进行备份与恢复，其实数据库对备份与恢复很简单，几条命令就搞定。但是因为对该命令用的比较少，容易忘记。所以做个记录并且学习学习数据库命令操作。">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://www.pisces.ml/articles/openstack/mysql/20161115">
+  <link rel="alternate" type="application/rss+xml" title="Scorpio 博客" href="http://www.pisces.ml/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="header">
+  <div class="wrapper">
+    <a class="site-title" href="/">Scorpio 博客</a>
+    <nav class="site-nav">
+      
+        
+      
+        
+        <a class="page-link" href="/about/">关于我</a>
+        
+      
+        
+        <a class="page-link" href="/category/">目录</a>
+        
+      
+        
+        <a class="page-link" href="/extension">推荐阅读</a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">mysql数据库备份与恢复</h1>
+    <p class="post-meta">Nov 15, 2016</p>
+  </header>
+
+  <article class="post-content">
+    <p>工作当中有时需要对数据库进行备份与恢复，其实数据库对备份与恢复很简单，几条命令就搞定。
+但是因为对该命令用的比较少，容易忘记。所以做个记录并且学习学习数据库命令操作。</p>
+
+<h2 id="section">简介</h2>
+
+<p>mysqldump为MySQL逻辑备份工具，产生一系列SQL语句，之后重新执行以产生备份的库、表及数据。
+也可产生CSV、XML等格式的数据。适用于各类引擎的表。</p>
+
+<h2 id="mysqldump">mysqldump备份逻辑思想</h2>
+
+<p>我们查看通过mysqldump命令默认备份导出的文件大概内容如下：</p>
+
+<p>创建数据库判断语句-删除表-创建表-锁表-禁用索引-插入数据-启用索引-解锁表</p>
+
+<p>备份文件内容如下所示：</p>
+
+<blockquote>
+  <p>– MySQL dump 10.13  Distrib 5.7.13, for osx10.11 (x86_64)</p>
+
+  <p>–</p>
+
+  <p>– Host: localhost    Database: keystone</p>
+
+  <hr />
+
+  <p>– Server version	5.7.13</p>
+
+  <p>/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;</p>
+
+  <p>/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;</p>
+
+  <p>/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;</p>
+
+  <p>/*!40101 SET NAMES utf8 */;</p>
+
+  <p>/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;</p>
+
+  <p>/*!40103 SET TIME_ZONE=’+00:00’ */;</p>
+
+  <p>/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;</p>
+
+  <p>/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;</p>
+
+  <p>/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE=’NO_AUTO_VALUE_ON_ZERO’ */;</p>
+
+  <p>/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;</p>
+
+  <p>–</p>
+
+  <p>– Table structure for table <code class="highlighter-rouge">domain</code></p>
+
+  <p>–</p>
+
+  <p>DROP TABLE IF EXISTS <code class="highlighter-rouge">domain</code>;</p>
+
+  <p>/*!40101 SET @saved_cs_client     = @@character_set_client */;</p>
+
+  <p>/*!40101 SET character_set_client = utf8 */;</p>
+
+  <p>CREATE TABLE <code class="highlighter-rouge">domain</code> (</p>
+
+  <p><code class="highlighter-rouge">id</code> varchar(64) NOT NULL,</p>
+
+  <p><code class="highlighter-rouge">name</code> varchar(64) NOT NULL,</p>
+
+  <p><code class="highlighter-rouge">enabled</code> tinyint(1) NOT NULL,</p>
+
+  <p><code class="highlighter-rouge">extra</code> text,</p>
+
+  <p>PRIMARY KEY (<code class="highlighter-rouge">id</code>),</p>
+
+  <p>UNIQUE KEY <code class="highlighter-rouge">ixu_domain_name</code> (<code class="highlighter-rouge">name</code>)</p>
+
+  <p>) ENGINE=InnoDB DEFAULT CHARSET=utf8;</p>
+
+  <p>/*!40101 SET character_set_client = @saved_cs_client */;</p>
+
+  <p>/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;</p>
+
+  <p>/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;</p>
+
+  <p>/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;</p>
+
+  <p>/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;</p>
+
+  <p>/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;</p>
+
+  <p>/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;</p>
+
+  <p>/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;</p>
+
+  <p>/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;</p>
+
+  <p>– Dump completed on 2016-11-15 22:36:38</p>
+</blockquote>
+
+<p>备份的逻辑就是将表结构以及数据变成sql语句保存下来，恢复的时候只需要在mysql中执行这些命令就行了。</p>
+
+<h2 id="section-1">命令使用</h2>
+
+<p><strong>备份一个或者多个表</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump -u 用户名 -p (密码) [option] db_name [table_1 table_2] &gt; xxx.sql
+</code></pre>
+</div>
+
+<p><strong>备份多个数据库</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump -u 用户名 -p (密码) [option] --databases db_name_1 db_name_2 ... &gt; xxx.sql
+</code></pre>
+</div>
+
+<p><strong>备份所有数据库</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump -u 用户名 -p (密码) [option] --all-databases &gt; xxx.sql
+</code></pre>
+</div>
+
+<p><strong>只备份表结构</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump --no-data/-d --databases mdb_name_1 db_name_2 ...&gt; xxx.sql
+</code></pre>
+</div>
+
+<p><strong>条件导出数据</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump -u 用户名 -p db_name a1 --where='id="xxxxxxxxxxx"' &gt; xxx.sql
+</code></pre>
+</div>
+
+<p><strong>跨服务器导出导入数据</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysqldump --host=host_id_1 -u 用户名 -p (密码) -C db_name_1 | mysql --host=host_id_2 -u 用户名 -p (密码) db_name_2
+
+该命令的意思是将主机1的数据库1倒入到主机2的数据库2中, 其中-C参数是启用压缩传递
+</code></pre>
+</div>
+
+<p>以上命令是我们备份数据库中经常用到对，还有好多命令我们不一一列出，想了解跟多关于该命令的使用我们可以
+使用帮助命令查看：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>man mysqldump or mysqldump --help
+</code></pre>
+</div>
+
+<h2 id="section-2">如何恢复？</h2>
+
+<p>当我们通过mysqldump命令备份了数据库后我们需要如何恢复？根据如上命令的语法，理所当然的我以为恢复就是逆向，将符号’&gt;’ 换成’&lt;’就ok了。
+然而结果就是我想多了😢😢，所以我上面特别先讲了mysqldump备份逻辑，当你明白备份逻辑后明显如果使用mysqldump命令是无法进行数据恢复的。
+正确恢复应该是如下命令：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>mysql -u 用户名 -p (密码) &lt; xxx.sql
+</code></pre>
+</div>
+
+<h2 id="section-3">附件：（中文帮助文档）</h2>
+
+<p>–all-databases , -A</p>
+
+<p>导出全部数据库。</p>
+
+<p>mysqldump -uroot -p –all-databases</p>
+
+<p>–all-tablespaces , -Y</p>
+
+<p>导出全部表空间。</p>
+
+<p>mysqldump -uroot -p –all-databases –all-tablespaces</p>
+
+<p>–no-tablespaces , -y</p>
+
+<p>不导出任何表空间信息。</p>
+
+<p>mysqldump -uroot -p –all-databases –no-tablespaces</p>
+
+<p>–add-drop-database</p>
+
+<p>每个数据库创建之前添加drop数据库语句。</p>
+
+<p>mysqldump -uroot -p –all-databases –add-drop-database</p>
+
+<p>–add-drop-table</p>
+
+<p>每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用–skip-add-drop-table取消选项)</p>
+
+<p>mysqldump -uroot -p –all-databases (默认添加drop语句)</p>
+
+<p>mysqldump -uroot -p –all-databases –skip-add-drop-table (取消drop语句)</p>
+
+<p>–add-locks</p>
+
+<p>在每个表导出之前增加LOCK TABLES并且之后UNLOCK TABLE。(默认为打开状态，使用–skip-add-locks取消选项)</p>
+
+<p>mysqldump -uroot -p –all-databases (默认添加LOCK语句)</p>
+
+<p>mysqldump -uroot -p –all-databases –skip-add-locks (取消LOCK语句)</p>
+
+<p>–allow-keywords</p>
+
+<p>允许创建是关键词的列名字。这由表名前缀于每个列名做到。</p>
+
+<p>mysqldump -uroot -p –all-databases –allow-keywords</p>
+
+<p>–apply-slave-statements</p>
+
+<p>在’CHANGE MASTER’前添加’STOP SLAVE’，并且在导出的最后添加’START SLAVE’。</p>
+
+<p>mysqldump -uroot -p –all-databases –apply-slave-statements</p>
+
+<p>–character-sets-dir</p>
+
+<p>字符集文件的目录</p>
+
+<p>mysqldump -uroot -p –all-databases –character-sets-dir=/usr/local/mysql/share/mysql/charsets</p>
+
+<p>–comments</p>
+
+<p>附加注释信息。默认为打开，可以用–skip-comments取消</p>
+
+<p>mysqldump -uroot -p –all-databases (默认记录注释)</p>
+
+<p>mysqldump -uroot -p –all-databases –skip-comments (取消注释)</p>
+
+<p>–compatible</p>
+
+<p>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，</p>
+
+<p>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
+
+<p>mysqldump -uroot -p –all-databases –compatible=ansi</p>
+
+<p>–compact</p>
+
+<p>导出更少的输出信息(用于调试)。去掉注释和头尾等结构。可以使用选项：–skip-add-drop-table –skip-add-locks –skip-comments –skip-disable-keys</p>
+
+<p>mysqldump -uroot -p –all-databases –compact</p>
+
+<p>–complete-insert, -c</p>
+
+<p>使用完整的insert语句(包含列名称)。这么做能提高插入效率，但是可能会受到max_allowed_packet参数的影响而导致插入失败。</p>
+
+<p>mysqldump -uroot -p –all-databases –complete-insert</p>
+
+<p>–compress, -C</p>
+
+<p>在客户端和服务器之间启用压缩传递所有信息</p>
+
+<p>mysqldump -uroot -p –all-databases –compress</p>
+
+<p>–create-options, -a</p>
+
+<p>在CREATE TABLE语句中包括所有MySQL特性选项。(默认为打开状态)</p>
+
+<p>mysqldump -uroot -p –all-databases</p>
+
+<p>–databases, -B</p>
+
+<p>导出几个数据库。参数后面所有名字参量都被看作数据库名。</p>
+
+<p>mysqldump -uroot -p –databases test mysql</p>
+
+<p>–debug</p>
+
+<p>输出debug信息，用于调试。默认值为：d:t,/tmp/mysqldump.trace</p>
+
+<p>mysqldump -uroot -p –all-databases –debug</p>
+
+<p>mysqldump -uroot -p –all-databases –debug=” d:t,/tmp/debug.trace”</p>
+
+<p>–debug-check</p>
+
+<p>检查内存和打开文件使用说明并退出。</p>
+
+<p>mysqldump -uroot -p –all-databases –debug-check</p>
+
+<p>–debug-info</p>
+
+<p>输出调试信息并退出</p>
+
+<p>mysqldump -uroot -p –all-databases –debug-info</p>
+
+<p>–default-character-set</p>
+
+<p>设置默认字符集，默认值为utf8</p>
+
+<p>mysqldump -uroot -p –all-databases –default-character-set=utf8</p>
+
+<p>–delayed-insert</p>
+
+<p>采用延时插入方式（INSERT DELAYED）导出数据</p>
+
+<p>mysqldump -uroot -p –all-databases –delayed-insert</p>
+
+<p>–delete-master-logs</p>
+
+<p>master备份后删除日志. 这个参数将自动激活–master-data。</p>
+
+<p>mysqldump -uroot -p –all-databases –delete-master-logs</p>
+
+<p>–disable-keys</p>
+
+<p>对于每个表，用/<em>!40000 ALTER TABLE tbl_name DISABLE KEYS */;和/</em>!40000 ALTER TABLE tbl_name ENABLE KEYS */;语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
+
+<p>mysqldump -uroot -p –all-databases</p>
+
+<p>–dump-slave</p>
+
+<p>该选项将主的binlog位置和文件名追加到导出数据的文件中(show slave status)。设置为1时，将会以CHANGE MASTER命令输出到数据文件；设置为2时，会在change前加上注释。该选项将会打开–lock-all-tables，除非–single-transaction被指定。该选项会自动关闭–lock-tables选项。默认值为0。</p>
+
+<p>mysqldump -uroot -p –all-databases –dump-slave=1</p>
+
+<p>mysqldump -uroot -p –all-databases –dump-slave=2 –master-data</p>
+
+<p>该选项将当前服务器的binlog的位置和文件名追加到输出文件中(show master status)。如果为1，将会输出CHANGE MASTER 命令；如果为2，输出的CHANGE MASTER命令前添加注释信息。该选项将打开–lock-all-tables 选项，除非–single-transaction也被指定（在这种情况下，全局读锁在开始导出时获得很短的时间；其他内容参考下面的–single-transaction选项）。该选项自动关闭–lock-tables选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –master-data=1;</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –master-data=2; –events, -E</p>
+
+<p>导出事件。</p>
+
+<p>mysqldump -uroot -p –all-databases –events</p>
+
+<p>–extended-insert, -e</p>
+
+<p>使用具有多个VALUES列的INSERT语法。这样使导出文件更小，并加速导入时的速度。默认为打开状态，使用–skip-extended-insert取消选项。</p>
+
+<p>mysqldump -uroot -p –all-databases</p>
+
+<p>mysqldump -uroot -p –all-databases–skip-extended-insert (取消选项)</p>
+
+<p>–fields-terminated-by</p>
+
+<p>导出文件中忽略给定字段。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+
+<p>mysqldump -uroot -p test test –tab=”/home/mysql” –fields-terminated-by=”#”</p>
+
+<p>–fields-enclosed-by</p>
+
+<p>输出文件中的各个字段用给定字符包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+
+<p>mysqldump -uroot -p test test –tab=”/home/mysql” –fields-enclosed-by=”#”</p>
+
+<p>–fields-optionally-enclosed-by</p>
+
+<p>输出文件中的各个字段用给定字符选择性包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+
+<p>mysqldump -uroot -p test test –tab=”/home/mysql” –fields-enclosed-by=”#” –fields-optionally-enclosed-by =”#”</p>
+
+<p>–fields-escaped-by</p>
+
+<p>输出文件中的各个字段忽略给定字符。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+
+<p>mysqldump -uroot -p mysql user –tab=”/home/mysql” –fields-escaped-by=”#”</p>
+
+<p>–flush-logs</p>
+
+<p>开始导出之前刷新日志。</p>
+
+<p>请注意：假如一次导出多个数据库(使用选项–databases或者–all-databases)，将会逐个数据库刷新日志。除使用–lock-all-tables或者–master-data外。在这种情况下，日志将会被刷新一次，相应的所以表同时被锁定。因此，如果打算同时导出和刷新日志应该使用–lock-all-tables 或者–master-data 和–flush-logs。</p>
+
+<p>mysqldump -uroot -p –all-databases –flush-logs</p>
+
+<p>–flush-privileges</p>
+
+<p>在导出mysql数据库之后，发出一条FLUSH PRIVILEGES 语句。为了正确恢复，该选项应该用于导出mysql数据库和依赖mysql数据库数据的任何时候。</p>
+
+<p>mysqldump -uroot -p –all-databases –flush-privileges</p>
+
+<p>–force</p>
+
+<p>在导出过程中忽略出现的SQL错误。</p>
+
+<p>mysqldump -uroot -p –all-databases –force</p>
+
+<p>–help</p>
+
+<p>显示帮助信息并退出。</p>
+
+<p>mysqldump –help</p>
+
+<p>–hex-blob</p>
+
+<p>使用十六进制格式导出二进制字符串字段。如果有二进制数据就必须使用该选项。影响到的字段类型有BINARY、VARBINARY、BLOB。</p>
+
+<p>mysqldump -uroot -p –all-databases –hex-blob</p>
+
+<p>–host, -h</p>
+
+<p>需要导出的主机信息</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases</p>
+
+<p>–ignore-table</p>
+
+<p>不导出指定表。指定忽略多个表时，需要重复多次，每次一个表。每个表必须同时指定数据库和表名。例如：–ignore-table=database.table1 –ignore-table=database.table2 ……</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –ignore-table=mysql.user</p>
+
+<p>–include-master-host-port</p>
+
+<p>在–dump-slave产生的’CHANGE MASTER TO..’语句中增加’MASTER_HOST=<host>，MASTER_PORT=<port>'</port></host></p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –include-master-host-port</p>
+
+<p>–insert-ignore</p>
+
+<p>在插入行时使用INSERT IGNORE语句.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –insert-ignore</p>
+
+<p>–lines-terminated-by</p>
+
+<p>输出文件的每行用给定字符串划分。与–tab选项一起使用，不能用于–databases和–all-databases选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost test test –tab=”/tmp/mysql” –lines-terminated-by=”##”</p>
+
+<p>–lock-all-tables, -x</p>
+
+<p>提交请求锁定所有数据库中的所有表，以保证数据的一致性。这是一个全局读锁，并且自动关闭–single-transaction 和–lock-tables 选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –lock-all-tables</p>
+
+<p>–lock-tables, -l</p>
+
+<p>开始导出前，锁定所有表。用READ LOCAL锁定表以允许MyISAM表并行插入。对于支持事务的表例如InnoDB和BDB，–single-transaction是一个更好的选择，因为它根本不需要锁定表。</p>
+
+<p>请注意当导出多个数据库时，–lock-tables分别为每个数据库锁定表。因此，该选项不能保证导出文件中的表在数据库之间的逻辑一致性。不同数据库表的导出状态可以完全不同。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –lock-tables</p>
+
+<p>–log-error</p>
+
+<p>附加警告和错误信息到给定文件</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –log-error=/tmp/mysqldump_error_log.err</p>
+
+<p>–max_allowed_packet</p>
+
+<p>服务器发送和接受的最大包长度。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –max_allowed_packet=10240</p>
+
+<p>–net_buffer_length</p>
+
+<p>TCP/IP和socket连接的缓存大小。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –net_buffer_length=1024</p>
+
+<p>–no-autocommit</p>
+
+<p>使用autocommit/commit 语句包裹表。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –no-autocommit</p>
+
+<p>–no-create-db, -n</p>
+
+<p>只导出数据，而不添加CREATE DATABASE 语句。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –no-create-db</p>
+
+<p>–no-create-info, -t</p>
+
+<p>只导出数据，而不添加CREATE TABLE 语句。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –no-create-info</p>
+
+<p>–no-data, -d</p>
+
+<p>不导出任何数据，只导出数据库表结构。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –no-data</p>
+
+<p>–no-set-names, -N</p>
+
+<p>等同于–skip-set-charset</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –no-set-names</p>
+
+<p>–opt</p>
+
+<p>等同于–add-drop-table, –add-locks, –create-options, –quick, –extended-insert, –lock-tables, –set-charset, –disable-keys 该选项默认开启, 可以用–skip-opt禁用.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –opt</p>
+
+<p>–order-by-primary</p>
+
+<p>如果存在主键，或者第一个唯一键，对每个表的记录进行排序。在导出MyISAM表到InnoDB表时有效，但会使得导出工作花费很长时间。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –order-by-primary</p>
+
+<p>–password, -p</p>
+
+<p>连接数据库密码</p>
+
+<p>–pipe(windows系统可用)</p>
+
+<p>使用命名管道连接mysql</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –pipe</p>
+
+<p>–port, -P</p>
+
+<p>连接数据库端口号</p>
+
+<p>–protocol</p>
+
+<p>使用的连接协议，包括：tcp, socket, pipe, memory.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –protocol=tcp</p>
+
+<p>–quick, -q</p>
+
+<p>不缓冲查询，直接导出到标准输出。默认为打开状态，使用–skip-quick取消该选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –skip-quick</p>
+
+<p>–quote-names,-Q</p>
+
+<p>使用（`）引起表和列名。默认为打开状态，使用–skip-quote-names取消该选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –skip-quote-names</p>
+
+<p>–replace</p>
+
+<p>使用REPLACE INTO 取代INSERT INTO.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –replace</p>
+
+<p>–result-file, -r</p>
+
+<p>直接输出到指定文件中。该选项应该用在使用回车换行对（\r\n）换行的系统上（例如：DOS，Windows）。该选项确保只有一行被使用。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –result-file=/tmp/mysqldump_result_file.txt</p>
+
+<p>–routines, -R</p>
+
+<p>导出存储过程以及自定义函数。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –routines</p>
+
+<p>–set-charset</p>
+
+<p>添加’SET NAMES default_character_set’到输出文件。默认为打开状态，使用–skip-set-charset关闭选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –skip-set-charset</p>
+
+<p>–single-transaction</p>
+
+<p>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于多版本存储引擎，仅InnoDB。本选项和–lock-tables 选项是互斥的，因为LOCK TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用–quick 选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –single-transaction</p>
+
+<p>–dump-date</p>
+
+<p>将导出时间添加到输出文件中。默认为打开状态，使用–skip-dump-date关闭选项。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –skip-dump-date</p>
+
+<p>–skip-opt</p>
+
+<p>禁用–opt选项.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –skip-opt</p>
+
+<p>–socket,-S</p>
+
+<p>指定连接mysql的socket文件位置，默认路径/tmp/mysql.sock</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –socket=/tmp/mysqld.sock</p>
+
+<p>–tab,-T</p>
+
+<p>为每个表在给定路径创建tab分割的文本文件。注意：仅仅用于mysqldump和mysqld服务器运行在相同机器上。</p>
+
+<p>mysqldump -uroot -p –host=localhost test test –tab=”/home/mysql”</p>
+
+<p>–tables</p>
+
+<p>覆盖–databases (-B)参数，指定需要导出的表名。</p>
+
+<p>mysqldump -uroot -p –host=localhost –databases test –tables test</p>
+
+<p>–triggers</p>
+
+<p>导出触发器。该选项默认启用，用–skip-triggers禁用它。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –triggers</p>
+
+<p>–tz-utc</p>
+
+<p>在导出顶部设置时区TIME_ZONE=’+00:00’ ，以保证在不同时区导出的TIMESTAMP 数据或者数据被移动其他时区时的正确性。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –tz-utc</p>
+
+<p>–user, -u</p>
+
+<p>指定连接的用户名。</p>
+
+<p>–verbose, –v</p>
+
+<p>输出多种平台信息。</p>
+
+<p>–version, -V</p>
+
+<p>输出mysqldump版本信息并退出</p>
+
+<p>–where, -w</p>
+
+<p>只转储给定的WHERE条件选择的记录。请注意如果条件包含命令解释符专用空格或字符，一定要将条件引用起来。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –where=” user=’root’”</p>
+
+<p>–xml, -X</p>
+
+<p>导出XML格式.</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –xml</p>
+
+<p>–plugin_dir</p>
+
+<p>客户端插件的目录，用于兼容不同的插件版本。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –plugin_dir=”/usr/local/lib/plugin”</p>
+
+<p>–default_auth</p>
+
+<p>客户端插件默认使用权限。</p>
+
+<p>mysqldump -uroot -p –host=localhost –all-databases –default-auth=”/u</p>
+
+<blockquote>
+  <p>参考文档：
+<a href="http://dev.mysql.com/doc/refman/5.6/en/mysqldump.html#option_mysqldump_protocol">http://dev.mysql.com/doc/refman/5.6/en/mysqldump.html#option_mysqldump_protocol</a></p>
+</blockquote>
+
+  </article>
+  
+  
+
+<div class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = 'disqusscorpio'; // required: replace example with your forum shortname
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+</div>
+
+
+
+
+</div>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/avatar.jpg" alt="ChengKunYe">
+  <div class="col-box-title name">ChengKunYe</div>
+  <p>“任何傻瓜都能写出计算机可以理解的代码。好的程序员能写出人能读懂的代码” ——Martin Fowler</p>
+  <p class="contact">
+    
+    <a href="https://github.com/scorpioxiatian">GitHub</a>
+    
+    
+    
+    <a href="mailto:smith7alan@qq.com">Email</a>
+    
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/articles/openstack/mysql/20161115">mysql数据库备份与恢复</a></li>
+    
+      <li><a class="post-link" href="/articles/linux/20161014">Vim快捷键整理</a></li>
+    
+      <li><a class="post-link" href="/articles/jekyll/2016722">jekyll 常用变量</a></li>
+    
+      <li><a class="post-link" href="/articles/openstack/2016602">Keystone对接ActiveDirectory</a></li>
+    
+      <li><a class="post-link" href="/articles/linux/2016522">tcpdump命令详解</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Friendly Link</div>
+  <ul class="post-list">
+    <li><a class="post-link" href="http://mytrix.me/">MatheMatrix[PG]'s blog'</a></li>
+    <li><a class="post-link" href="http://blog.coderzh.com/">CoderZH Blog</a></li>
+    <li><a class="post-link" href="http://way4ever.com/">Way Forever</a></li>
+    <li><a class="post-link" href="http://www.wklken.me/">wklken</a></li>
+    <li><a class="post-link" href="http://bingotree.cn/">BINGOTREE</a></li>
+    <li><a class="post-link" href="http://adam.younglogic.com/">Adam Young’s Bloe</a></li>
+    <li><a class="post-link" href="http://seanlook.com/">Sean's Notes</a></li>
+    <li><a class="post-link" href="http://wsfdl.com/">koala bear</a></li>
+    <li><a class="post-link" href="http://www.biaodianfu.com/">标点符</a></li>
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2016 ChengKunYe
+</div>
+</footer>
+
+<script src="/js/easybook.js"></script>
+
+  </body>
+
+</html>
